@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import eu.basicairdata.bluetoothhelper.BluetoothHelper;
 import me.aflak.arduino.Arduino;
 import me.aflak.arduino.ArduinoListener;
 
@@ -18,6 +19,11 @@ public class HomeActivity extends AppCompatActivity implements ArduinoListener {
     private TextView logTextView;
     private EditText requestEditText;
     private Button enviarButton;
+    private Button obtenerButton;
+    private BluetoothHelper mBluetoothHelper;
+    private Button conBluetoothButton;
+
+    private Boolean guardarDatos = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,15 +32,59 @@ public class HomeActivity extends AppCompatActivity implements ArduinoListener {
         logTextView = (TextView) findViewById(R.id.logTextView);
         requestEditText = (EditText) findViewById(R.id.requestEditText);
         enviarButton = (Button) findViewById(R.id.enviarButton);
+        obtenerButton = (Button) findViewById(R.id.obtenerButton);
+        conBluetoothButton = (Button) findViewById(R.id.conBluetoothButton);
 
+        mBluetoothHelper = new BluetoothHelper();
         arduino = new Arduino(this);
+
         logTextView.setMovementMethod(new ScrollingMovementMethod());
 
         enviarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                arduino.send(requestEditText.getText().toString().getBytes());
+                if(arduino.isOpened()) {
+                    arduino.send(requestEditText.getText().toString().getBytes());
+                }
+                if(mBluetoothHelper.isConnected()){
+                    mBluetoothHelper.SendMessage(requestEditText.getText().toString());
+                }
+            }
+        });
+
+        mBluetoothHelper.setBluetoothHelperListener(new BluetoothHelper.BluetoothHelperListener() {
+            @Override
+            public void onBluetoothHelperMessageReceived(BluetoothHelper bluetoothhelper, String message) {
+                display("#"+message);
+                if(guardarDatos){
+                    String[] dato =message.split(";");
+                }
+            }
+
+            @Override
+            public void onBluetoothHelperConnectionStateChanged(BluetoothHelper bluetoothhelper, boolean isConnected) {
+
+            }
+        });
+
+        conBluetoothButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mBluetoothHelper.Connect("HubSolar");
+            }
+        });
+
+        obtenerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                guardarDatos = true;
+                if(arduino.isOpened()) {
+                    arduino.send("1".getBytes());
+                }
+                if(mBluetoothHelper.isConnected()){
+                    mBluetoothHelper.SendMessage("1");
+                }
             }
         });
     }

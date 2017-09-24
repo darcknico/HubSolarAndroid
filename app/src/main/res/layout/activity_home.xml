@@ -26,21 +26,29 @@
             android:layout_height="wrap_content"
             android:text="ENVIAR" />
 
-        <ScrollView
+        <Button
+            android:id="@+id/conBluetoothButton"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:text="CONECTAR BT" />
 
-            <LinearLayout
+        <Button
+            android:id="@+id/obtenerButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="GUARDAR DATOS" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/logTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                android:gravity="bottom" />
+        </LinearLayout>
 
-                <TextView
-                    android:id="@+id/logTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="bottom" />
-            </LinearLayout>
-        </ScrollView>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
