@@ -17,6 +17,10 @@ public class HubSolarDBHelper extends SQLiteOpenHelper {
     public static final String TEMPERATURA = "temperatura";
     public static final String HUMEDAD = "humedad";
     public static final String INDICE_CALOR = "indice_calor";
+    public static final String RADIACION_SOLAR = "radiacion_solar";
+    public static final String INTESIDAD_CORRIENTE = "intencidad_corriente";
+    public static final String VOLTAJE = "voltaje";
+    public static final String POTENCIA = "potencia";
     public static final String LATITUD = "latitud";
     public static final String LONGITUD = "longitud";
     public static final String FECHA_HORA = "fecha_hora";
@@ -43,6 +47,10 @@ public class HubSolarDBHelper extends SQLiteOpenHelper {
                     TEMPERATURA + " REAL NOT NULL, " +
                     HUMEDAD + " REAL NOT NULL," +
                     INDICE_CALOR + " REAL NOT NULL," +
+                    RADIACION_SOLAR + " REAL NOT NULL," +
+                    INTESIDAD_CORRIENTE + " REAL NOT NULL," +
+                    VOLTAJE + " REAL NOT NULL," +
+                    POTENCIA + " REAL NOT NULL," +
                     LATITUD + " INTEGER," +
                     LONGITUD + " INTEGER," +
                     SUBIDO + " INTEGER," +

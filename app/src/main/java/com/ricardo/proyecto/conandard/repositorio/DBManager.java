@@ -32,7 +32,17 @@ public class DBManager {
         dbHelper.close();
     }
 
-    public void insert(String humedad, String temperatura, String indice_calor, Long latitud, Long longitud,String fecha_hora) {
+    public void insert(
+            String humedad,
+            String temperatura,
+            String indice_calor,
+            String radiacion_solar,
+            String intensidad_corriente,
+            String voltaje,
+            String potencia,
+            Long latitud,
+            Long longitud,
+            String fecha_hora) {
         SimpleDateFormat s = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
         String creado = s.format(new Date());
         String uuid = UUID.randomUUID().toString();
@@ -40,6 +50,10 @@ public class DBManager {
         contentValue.put(HubSolarDBHelper.HUMEDAD, humedad);
         contentValue.put(HubSolarDBHelper.TEMPERATURA, temperatura);
         contentValue.put(HubSolarDBHelper.INDICE_CALOR, indice_calor);
+        contentValue.put(HubSolarDBHelper.RADIACION_SOLAR, radiacion_solar);
+        contentValue.put(HubSolarDBHelper.INTESIDAD_CORRIENTE, intensidad_corriente);
+        contentValue.put(HubSolarDBHelper.VOLTAJE, voltaje);
+        contentValue.put(HubSolarDBHelper.POTENCIA, potencia);
         contentValue.put(HubSolarDBHelper.LATITUD, latitud);
         contentValue.put(HubSolarDBHelper.LONGITUD, longitud);
         contentValue.put(HubSolarDBHelper.FECHA_HORA, fecha_hora);
