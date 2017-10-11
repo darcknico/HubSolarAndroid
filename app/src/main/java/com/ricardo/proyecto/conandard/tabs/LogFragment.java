@@ -1,36 +1,44 @@
 package com.ricardo.proyecto.conandard.tabs;
 
-import android.content.Context;
-import android.net.Uri;
+import android.graphics.drawable.Drawable;
+import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.ricardo.proyecto.conandard.R;
-import com.ricardo.proyecto.conandard.arduino.ArduinoManager;
-import com.ricardo.proyecto.conandard.arduino.LogArduinoListener;
+import com.ricardo.proyecto.conandard.manager.ArduinoManager;
+import com.ricardo.proyecto.conandard.repositorio.Singleton;
 
 import eu.basicairdata.bluetoothhelper.BluetoothHelper;
-import me.aflak.arduino.Arduino;
+import me.aflak.arduino.ArduinoListener;
 
 public class LogFragment extends Fragment {
 
-
-    private Arduino arduino;
     private TextView logTextView;
     private EditText requestEditText;
-    private Button enviarButton;
-    private Button obtenerButton;
-    private BluetoothHelper mBluetoothHelper;
-    private Button conBluetoothButton;
 
-    private Boolean guardarDatos = false;
+    private ImageButton logImportButton;
+    private ImageButton logLogButton;
+    private ImageButton logQueryButton;
+
+    private Drawable logImportDrawable;
+    private Drawable logLogDrawable;
+    private Drawable logQueryDrawable;
+
+    private ArduinoManager arduinoManager;
+
+    private View v;
+    private StringBuilder sb;
+    private Singleton singleton;
+
     public LogFragment() {
         // Required empty public constructor
     }
@@ -45,66 +53,140 @@ public class LogFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_log, container, false);
+        v = inflater.inflate(R.layout.fragment_log, container, false);
+
+        logImportButton = (ImageButton) v.findViewById(R.id.logImportButton);
+        logLogButton = (ImageButton) v.findViewById(R.id.logLogButton);
+        logQueryButton = (ImageButton) v.findViewById(R.id.logQueryButton);
         logTextView = (TextView) v.findViewById(R.id.logTextView);
         requestEditText = (EditText) v.findViewById(R.id.requestEditText);
-        enviarButton = (Button) v.findViewById(R.id.enviarButton);
-        obtenerButton = (Button) v.findViewById(R.id.obtenerButton);
-        conBluetoothButton = (Button) v.findViewById(R.id.conBluetoothButton);
 
-        ArduinoManager.getInstance().getArduino().setArduinoListener(new LogArduinoListener(logTextView,getActivity()));
-        mBluetoothHelper = new BluetoothHelper();
+        logImportDrawable = logImportButton.getBackground();
+        logLogDrawable = logLogButton.getBackground();
+        logQueryDrawable = logQueryButton.getBackground();
 
         logTextView.setMovementMethod(new ScrollingMovementMethod());
 
-        enviarButton.setOnClickListener(new View.OnClickListener() {
+        arduinoManager = ArduinoManager.getInstance();
+
+        singleton = Singleton.getInstance();
+
+        logLogButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if(arduino.isOpened()) {
-                    arduino.send(requestEditText.getText().toString().getBytes());
-                }
-                if(mBluetoothHelper.isConnected()){
-                    mBluetoothHelper.SendMessage(requestEditText.getText().toString());
+                if(!singleton.isQuery() && !singleton.isImportar()) {
+                    singleton.notLOG();
+                    if(singleton.isLOG()) {
+                        logLogButton.setBackgroundResource(R.color.md_blue_50);
+                        enviar(ArduinoManager.LOG);
+                    } else {
+                        logLogButton.setBackground(logLogDrawable);
+                    }
                 }
             }
         });
 
-        mBluetoothHelper.setBluetoothHelperListener(new BluetoothHelper.BluetoothHelperListener() {
+        logQueryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!singleton.isQuery() && !singleton.isImportar() && !singleton.isLOG()) {
+                    singleton.notQuery();
+                }
+                if(singleton.isQuery()){
+                    logQueryButton.setBackgroundResource(R.color.md_blue_50);
+                    enviar(ArduinoManager.QUERY);
+                }
+            }
+        });
+
+        logImportButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!singleton.isQuery() && !singleton.isImportar() && !singleton.isLOG()) {
+                    singleton.notImportar();
+                }
+                if(singleton.isImportar()){
+                    logImportButton.setBackgroundResource(R.color.md_blue_50);
+                    enviar(ArduinoManager.IMPORT);
+                }
+            }
+        });
+
+        arduinoManager.getBluetoothHelper().setBluetoothHelperListener(new BluetoothHelper.BluetoothHelperListener() {
             @Override
             public void onBluetoothHelperMessageReceived(BluetoothHelper bluetoothhelper, String message) {
-                display("#"+message);
-                if(guardarDatos){
-                    String[] dato =message.split(";");
-                }
+
+                capturador("#: ",message);
             }
 
             @Override
             public void onBluetoothHelperConnectionStateChanged(BluetoothHelper bluetoothhelper, boolean isConnected) {
-
-            }
-        });
-
-        conBluetoothButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mBluetoothHelper.Connect("HubSolar");
-            }
-        });
-
-        obtenerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                guardarDatos = true;
-                if(arduino.isOpened()) {
-                    arduino.send("1".getBytes());
-                }
-                if(mBluetoothHelper.isConnected()){
-                    mBluetoothHelper.SendMessage("1");
+                if(isConnected){
+                    Snackbar.make(v,"Dispositivo conectado por Bluetooth.",Snackbar.LENGTH_SHORT);
+                } else {
+                    Snackbar.make(v,"Dispositivo desconectado por Bluetooth.",Snackbar.LENGTH_SHORT);
                 }
             }
         });
+
+        arduinoManager.getUsbHelper().setArduinoListener(new ArduinoListener() {
+            @Override
+            public void onArduinoAttached(UsbDevice device) {
+                Snackbar.make(v,"Dispositivo conectado por USB exitosamente.",Snackbar.LENGTH_SHORT);
+                arduinoManager.getUsbHelper().open(device);
+            }
+
+            @Override
+            public void onArduinoDetached() {
+                Snackbar.make(v,"Dispositivo desconectado por USB.",Snackbar.LENGTH_SHORT);
+            }
+
+            @Override
+            public void onArduinoMessage(byte[] bytes) {
+                sb.append( new String(bytes));
+                if(sb.toString().contains("\n")){
+                    String parte[]=sb.toString().split("\n");
+                    capturador("$: ",parte[0]);
+                    sb = new StringBuilder();
+                    boolean primero = true;
+                    for(String str :parte){
+                        if(primero){
+                            primero = false;
+                        } else {
+                            sb.append(str);
+                        }
+                    }
+
+                }
+            }
+
+            @Override
+            public void onArduinoOpened() {
+                Snackbar.make(v,"Dispositivo conectado por USB, abierto.",Snackbar.LENGTH_SHORT);
+            }
+        });
+
         return v;
+    }
+
+    public void capturador(String referencia,String message){
+        if(singleton.isLOG()) {
+            display(referencia + message);
+            enviar(ArduinoManager.LOG);
+        }
+        if(singleton.isQuery()){
+            display(referencia + message);
+            if (message.contains("FIN")){
+                logQueryButton.setBackground(logQueryDrawable);
+                singleton.notQuery();
+            }
+        }
+        if(singleton.isImportar()){
+            display(referencia + message);
+            logImportButton.setBackground(logImportDrawable);
+            singleton.notImportar();
+        }
+        display(message);
     }
 
     public void display(final String message){
@@ -120,4 +202,13 @@ public class LogFragment extends Fragment {
             }
         });
     }
+
+    public void enviar(String texto){
+        if(arduinoManager.getUsbHelper().isOpened()) {
+            arduinoManager.getUsbHelper().send(texto.getBytes());
+        } else if(arduinoManager.getBluetoothHelper().isConnected()){
+            arduinoManager.getBluetoothHelper().SendMessage(texto);
+        }
+    }
+
 }

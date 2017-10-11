@@ -1,11 +1,9 @@
-package com.ricardo.proyecto.conandard.arduino;
+package com.ricardo.proyecto.conandard.manager;
 
 import android.app.Activity;
 import android.hardware.usb.UsbDevice;
-import android.support.v4.app.Fragment;
 import android.widget.TextView;
 
-import me.aflak.arduino.Arduino;
 import me.aflak.arduino.ArduinoListener;
 
 /**
@@ -25,7 +23,7 @@ public class LogArduinoListener implements ArduinoListener {
     @Override
     public void onArduinoAttached(UsbDevice device) {
         display("Arduino unido!");
-        ArduinoManager.getInstance().getArduino().open(device);
+        ArduinoManager.getInstance().getUsbHelper().open(device);
     }
 
     @Override

@@ -30,23 +30,37 @@
                     android:ems="10"
                     android:inputType="number" />
 
-                <Button
-                    android:id="@+id/enviarButton"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="ENVIAR" />
+                    android:orientation="horizontal"
+                    android:weightSum="3"
+                    android:layout_margin="5dp">
 
-                <Button
-                    android:id="@+id/conBluetoothButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="CONECTAR BT" />
+                    <ImageButton
+                        android:id="@+id/logLogButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:layout_weight="1"
+                        app:srcCompat="@mipmap/ic_log" />
 
-                <Button
-                    android:id="@+id/obtenerButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="GUARDAR DATOS" />
+                    <ImageButton
+                        android:id="@+id/logQueryButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:layout_weight="1"
+                        app:srcCompat="@mipmap/ic_query" />
+
+                    <ImageButton
+                        android:id="@+id/logImportButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:layout_weight="1"
+                        app:srcCompat="@mipmap/ic_insert" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"

@@ -1,13 +1,154 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.ricardo.proyecto.conandard.tabs.ConectFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior">
 
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context="com.ricardo.proyecto.conandard.HomeActivity">
+
+            <LinearLayout
+                android:layout_width="368dp"
+                android:layout_height="382dp"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:weightSum="3"
+                tools:layout_editor_absoluteX="8dp"
+                tools:layout_editor_absoluteY="8dp">
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/card_layout_margin"
+                    android:layout_weight="1"
+                    app:cardCornerRadius="@dimen/card_cornerRadius"
+                    app:cardElevation="@dimen/card_cardElevation"
+                    app:cardUseCompatPadding="true"
+                    app:contentPadding="@dimen/card_contentPadding">
+
+                    <RelativeLayout
+                        android:id="@+id/relativeLayout1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="@dimen/card_relative_layout_padding">
+
+                        <TextView
+                            android:id="@+id/textView2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerInParent="true"
+                            android:text="Sincronizar"
+                            android:textSize="18sp" />
+
+                        <ImageButton
+                            android:id="@+id/conectBluetoohButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerInParent="true"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:src="@mipmap/ic_bluetooth" />
+
+                        <ImageButton
+                            android:id="@+id/conectUsbButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:layout_gravity="center"
+                            android:layout_toStartOf="@+id/conectBluetoohButton"
+                            android:gravity="center"
+                            android:src="@mipmap/ic_usb" />
+                    </RelativeLayout>
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/card_layout_margin"
+                    android:layout_weight="1"
+                    app:cardCornerRadius="@dimen/card_cornerRadius"
+                    app:cardElevation="@dimen/card_cardElevation"
+                    app:cardUseCompatPadding="true"
+                    app:contentPadding="@dimen/card_contentPadding">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="@dimen/card_relative_layout_padding">
+
+                        <ImageButton
+                            android:id="@+id/conectImportButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerInParent="true"
+                            android:src="@mipmap/ic_import_export"
+                            android:text="Button" />
+
+                        <TextView
+                            android:id="@+id/textView3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerInParent="true"
+                            android:text="Importar Datos"
+                            android:textSize="18sp" />
+                    </RelativeLayout>
+
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/card_layout_margin"
+                    android:layout_weight="1"
+                    app:cardCornerRadius="@dimen/card_cornerRadius"
+                    app:cardElevation="@dimen/card_cardElevation"
+                    app:cardUseCompatPadding="true"
+                    app:contentPadding="@dimen/card_contentPadding">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="@dimen/card_relative_layout_padding">
+
+                        <ImageButton
+                            android:id="@+id/conectCloudButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerInParent="true"
+                            android:src="@mipmap/ic_cloud"
+                            android:text="Button" />
+
+                        <TextView
+                            android:id="@+id/textView4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
+                            android:text="Subir Nube"
+                            android:textSize="18sp" />
+                    </RelativeLayout>
+                </android.support.v7.widget.CardView>
+            </LinearLayout>
+
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v4.widget.NestedScrollView>
 </FrameLayout>
