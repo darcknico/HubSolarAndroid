@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/fragmentLog"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.ricardo.proyecto.conandard.tabs.LogFragment">
 
@@ -9,73 +10,63 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipToPadding="true"
+        android:fillViewport="true"
         app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior">
 
-        <android.support.constraint.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context="com.ricardo.proyecto.conandard.HomeActivity">
+            android:orientation="vertical"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="8dp">
+
+            <EditText
+                android:id="@+id/requestEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="number" />
 
             <LinearLayout
-                android:layout_width="368dp"
-                android:layout_height="495dp"
-                android:orientation="vertical"
-                tools:layout_editor_absoluteX="8dp"
-                tools:layout_editor_absoluteY="8dp">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:orientation="horizontal"
+                android:weightSum="3">
 
-                <EditText
-                    android:id="@+id/requestEditText"
-                    android:layout_width="match_parent"
+                <ImageButton
+                    android:id="@+id/logLogButton"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:inputType="number" />
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    app:srcCompat="@mipmap/ic_log" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <ImageButton
+                    android:id="@+id/logQueryButton"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="3"
-                    android:layout_margin="5dp">
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    app:srcCompat="@mipmap/ic_query" />
 
-                    <ImageButton
-                        android:id="@+id/logLogButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:layout_weight="1"
-                        app:srcCompat="@mipmap/ic_log" />
-
-                    <ImageButton
-                        android:id="@+id/logQueryButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:layout_weight="1"
-                        app:srcCompat="@mipmap/ic_query" />
-
-                    <ImageButton
-                        android:id="@+id/logImportButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:layout_weight="1"
-                        app:srcCompat="@mipmap/ic_insert" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/logTextView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="bottom" />
-                </LinearLayout>
-
+                <ImageButton
+                    android:id="@+id/logImportButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    app:srcCompat="@mipmap/ic_insert" />
             </LinearLayout>
-        </android.support.constraint.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/logTextView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="bottom" />
+
+        </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 
 </FrameLayout>

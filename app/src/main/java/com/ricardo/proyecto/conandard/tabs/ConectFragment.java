@@ -1,17 +1,22 @@
 package com.ricardo.proyecto.conandard.tabs;
 
+import android.bluetooth.BluetoothAdapter;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
 import com.ricardo.proyecto.conandard.R;
 import com.ricardo.proyecto.conandard.manager.ArduinoManager;
+import com.ricardo.proyecto.conandard.repositorio.Singleton;
 
 
 public class ConectFragment extends Fragment {
@@ -28,6 +33,7 @@ public class ConectFragment extends Fragment {
     private ArduinoManager arduinoManager;
 
     private View v;
+    private FrameLayout frameLayout;
 
     public ConectFragment() {
         // Required empty public constructor
@@ -49,6 +55,8 @@ public class ConectFragment extends Fragment {
         conectCloudButton = (ImageButton) v.findViewById(R.id.conectCloudButton);
         conectImportButton = (ImageButton) v.findViewById(R.id.conectImportButton);
 
+        frameLayout = (FrameLayout) v.findViewById(R.id.fragmentConect);
+
         arduinoManager = ArduinoManager.getInstance();
 
         //guardando el background inicial
@@ -56,7 +64,7 @@ public class ConectFragment extends Fragment {
         initialBluetoothButton = conectBluetoohButton.getBackground();
 
         if(arduinoManager.getUsbHelper().isOpened()){
-            conectUsbButton.setBackgroundResource(R.color.md_blue_50);
+            conectUsbButton.setBackgroundResource(R.color.imageButtonPress);
         }
 
         if(arduinoManager.getBluetoothHelper().isConnected()){
@@ -66,15 +74,44 @@ public class ConectFragment extends Fragment {
         conectBluetoohButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!arduinoManager.getBluetoothHelper().isConnected() && !arduinoManager.getUsbHelper().isOpened() ){
-                    arduinoManager.getBluetoothHelper().Connect("HubSolar");
-                    conectBluetoohButton.setBackgroundResource(R.color.md_blue_50);
-                    Snackbar.make(v,"Dispositivo conectado por Bluetooth exitosamente",Snackbar.LENGTH_SHORT);
+                BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                if (mBluetoothAdapter == null) {
+                    snackbar("El dispositivo no dispone de bluetooth.");
                 } else {
-                    Snackbar.make(v,"No pudo realizar la conexcion por bluetooth",Snackbar.LENGTH_SHORT);
+                    if (!mBluetoothAdapter.isEnabled()) {
+                        snackbar("El bluetooth no esta prendido.");
+                    } else {
+                        if(!arduinoManager.getBluetoothHelper().isConnected() && !arduinoManager.getUsbHelper().isOpened()){
+                            arduinoManager.getBluetoothHelper().Connect("HubSolar");
+                        } else {
+                            arduinoManager.getBluetoothHelper().Disconnect();
+                            conectBluetoohButton.setBackground(initialBluetoothButton);
+                            snackbar("Bluetooth desconectado.");
+                        }
+
+                    }
                 }
             }
         });
+
+        conectUsbButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(arduinoManager.getUsbHelper().isOpened()){
+                    arduinoManager.getUsbHelper().close();
+                    conectUsbButton.setBackground(initialUsbButton);
+                }
+            }
+        });
+
+        conectImportButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+
 
         return v;
     }
@@ -82,15 +119,23 @@ public class ConectFragment extends Fragment {
     @Override
     public void onResume() {
         if(arduinoManager.getUsbHelper().isOpened()){
-            conectUsbButton.setBackgroundResource(R.color.md_blue_50);
+            conectUsbButton.setBackgroundResource(R.color.imageButtonPress);
             if(arduinoManager.getBluetoothHelper().isConnected()) {
                 arduinoManager.getBluetoothHelper().Disconnect();
             }
             conectBluetoohButton.setBackground(initialBluetoothButton);
-            Snackbar.make(v,"Dispositivo conectado por USB exitosamente",Snackbar.LENGTH_SHORT);
+            snackbar("Dispositivo conectado por USB exitosamente");
         } else {
             conectUsbButton.setBackground(initialUsbButton);
         }
+        if(arduinoManager.getBluetoothHelper().isConnected()) {
+            conectBluetoohButton.setBackgroundResource(R.color.imageButtonPress);
+        }
         super.onResume();
     }
+
+    public void snackbar(String message){
+        Snackbar.make(frameLayout,message,Snackbar.LENGTH_SHORT).show();
+    }
+
 }

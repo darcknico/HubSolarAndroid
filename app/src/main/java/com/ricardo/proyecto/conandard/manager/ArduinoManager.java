@@ -11,11 +11,13 @@ import me.aflak.arduino.Arduino;
 
 public final class ArduinoManager {
 
-    public static final String SYNC = "1";
-    public static final String LOG = "2";
-    public static final String QUERY = "3";
-    public static final String IMPORT = "4";
-    public static final String EXPORT = "5";
+    public static final String LOG = "0";
+    public static final String SELECTALL = "1";
+    public static final String DELETE = "2";
+    public static final String INSERT = "3";
+    public static final String COUNT = "4";
+    public static final String BACKUP = "5";
+
 
     private static ArduinoManager arduinoManager = null;
     private static Arduino usbHelper = null;

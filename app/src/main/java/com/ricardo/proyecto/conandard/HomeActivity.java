@@ -74,6 +74,7 @@ public class HomeActivity extends AppCompatActivity {
         return true;
     }
 
+    /*
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -92,11 +93,12 @@ public class HomeActivity extends AppCompatActivity {
         }
         return true;
     }
+    */
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new OperateFragment(), "ONE");
-        adapter.addFragment(new ConectFragment(), "TWO");
+        adapter.addFragment(new OperateFragment(), "INICIO");
+        adapter.addFragment(new ConectFragment(), "CONECCION");
         adapter.addFragment(new LogFragment(), "LOG");
         viewPager.setAdapter(adapter);
     }

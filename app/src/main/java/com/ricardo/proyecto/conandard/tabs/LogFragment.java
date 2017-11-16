@@ -6,10 +6,12 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -36,6 +38,7 @@ public class LogFragment extends Fragment {
     private ArduinoManager arduinoManager;
 
     private View v;
+    private FrameLayout frameLayout;
     private StringBuilder sb;
     private Singleton singleton;
 
@@ -46,7 +49,6 @@ public class LogFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -54,6 +56,8 @@ public class LogFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_log, container, false);
+
+        frameLayout = (FrameLayout) v.findViewById(R.id.fragmentLog);
 
         logImportButton = (ImageButton) v.findViewById(R.id.logImportButton);
         logLogButton = (ImageButton) v.findViewById(R.id.logLogButton);
@@ -74,13 +78,18 @@ public class LogFragment extends Fragment {
         logLogButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!singleton.isQuery() && !singleton.isImportar()) {
-                    singleton.notLOG();
-                    if(singleton.isLOG()) {
-                        logLogButton.setBackgroundResource(R.color.md_blue_50);
-                        enviar(ArduinoManager.LOG);
+                if(arduinoManager.getUsbHelper().isOpened() || arduinoManager.getBluetoothHelper().isConnected()) {
+                    if (!singleton.isQuery() && !singleton.isImportar() && !singleton.isLOG() && !singleton.isBackup()) {
+                        singleton.setLOG(true);
+                        if (singleton.isLOG()) {
+                            singleton.setEnviado(true);
+                            logLogButton.setBackgroundResource(R.color.imageButtonPress);
+                        } else {
+                            logLogButton.setBackground(logLogDrawable);
+                        }
                     } else {
                         logLogButton.setBackground(logLogDrawable);
+                        singleton.setLOG(false);
                     }
                 }
             }
@@ -89,12 +98,14 @@ public class LogFragment extends Fragment {
         logQueryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!singleton.isQuery() && !singleton.isImportar() && !singleton.isLOG()) {
-                    singleton.notQuery();
-                }
-                if(singleton.isQuery()){
-                    logQueryButton.setBackgroundResource(R.color.md_blue_50);
-                    enviar(ArduinoManager.QUERY);
+                if(arduinoManager.getUsbHelper().isOpened() || arduinoManager.getBluetoothHelper().isConnected()) {
+                    if (!singleton.isQuery() && !singleton.isImportar() && !singleton.isLOG() && !singleton.isBackup()) {
+                        singleton.setQuery(true);
+                    }
+                    if (singleton.isQuery()) {
+                        singleton.setEnviado(true);
+                        logQueryButton.setBackgroundResource(R.color.imageButtonPress);
+                    }
                 }
             }
         });
@@ -102,12 +113,14 @@ public class LogFragment extends Fragment {
         logImportButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!singleton.isQuery() && !singleton.isImportar() && !singleton.isLOG()) {
-                    singleton.notImportar();
-                }
-                if(singleton.isImportar()){
-                    logImportButton.setBackgroundResource(R.color.md_blue_50);
-                    enviar(ArduinoManager.IMPORT);
+                if(arduinoManager.getUsbHelper().isOpened() || arduinoManager.getBluetoothHelper().isConnected()) {
+                    if (!singleton.isQuery() && !singleton.isImportar() && !singleton.isLOG() && !singleton.isBackup()) {
+                        singleton.setImportar(true);
+                    }
+                    if (singleton.isImportar()) {
+                        enviar(ArduinoManager.LOG);
+                        logImportButton.setBackgroundResource(R.color.imageButtonPress);
+                    }
                 }
             }
         });
@@ -115,16 +128,18 @@ public class LogFragment extends Fragment {
         arduinoManager.getBluetoothHelper().setBluetoothHelperListener(new BluetoothHelper.BluetoothHelperListener() {
             @Override
             public void onBluetoothHelperMessageReceived(BluetoothHelper bluetoothhelper, String message) {
-
                 capturador("#: ",message);
             }
 
             @Override
             public void onBluetoothHelperConnectionStateChanged(BluetoothHelper bluetoothhelper, boolean isConnected) {
                 if(isConnected){
-                    Snackbar.make(v,"Dispositivo conectado por Bluetooth.",Snackbar.LENGTH_SHORT);
+                    snackbar("Dispositivo conectado por Bluetooth.");
                 } else {
-                    Snackbar.make(v,"Dispositivo desconectado por Bluetooth.",Snackbar.LENGTH_SHORT);
+                    singleton.setImportar(false);
+                    singleton.setLOG(false);
+                    singleton.setQuery(false);
+                    snackbar("Dispositivo desconectado por Bluetooth.");
                 }
             }
         });
@@ -132,13 +147,16 @@ public class LogFragment extends Fragment {
         arduinoManager.getUsbHelper().setArduinoListener(new ArduinoListener() {
             @Override
             public void onArduinoAttached(UsbDevice device) {
-                Snackbar.make(v,"Dispositivo conectado por USB exitosamente.",Snackbar.LENGTH_SHORT);
+                snackbar("Dispositivo conectado por USB exitosamente.");
                 arduinoManager.getUsbHelper().open(device);
             }
 
             @Override
             public void onArduinoDetached() {
-                Snackbar.make(v,"Dispositivo desconectado por USB.",Snackbar.LENGTH_SHORT);
+                singleton.setImportar(false);
+                singleton.setLOG(false);
+                singleton.setQuery(false);
+                snackbar("Dispositivo desconectado por USB.");
             }
 
             @Override
@@ -162,7 +180,7 @@ public class LogFragment extends Fragment {
 
             @Override
             public void onArduinoOpened() {
-                Snackbar.make(v,"Dispositivo conectado por USB, abierto.",Snackbar.LENGTH_SHORT);
+                snackbar("Dispositivo conectado por USB, abierto.");
             }
         });
 
@@ -186,7 +204,13 @@ public class LogFragment extends Fragment {
             logImportButton.setBackground(logImportDrawable);
             singleton.notImportar();
         }
-        display(message);
+        if(singleton.isBackup()){
+            display(referencia + message);
+            if (message.contains("FIN")){
+                logQueryButton.setBackground(logQueryDrawable);
+                singleton.notQuery();
+            }
+        }
     }
 
     public void display(final String message){
@@ -209,6 +233,10 @@ public class LogFragment extends Fragment {
         } else if(arduinoManager.getBluetoothHelper().isConnected()){
             arduinoManager.getBluetoothHelper().SendMessage(texto);
         }
+    }
+
+    public void snackbar(String message){
+        Snackbar.make(frameLayout,message,Snackbar.LENGTH_SHORT).show();
     }
 
 }
