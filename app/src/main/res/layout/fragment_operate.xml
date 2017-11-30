@@ -8,23 +8,22 @@
     <!-- TODO: Update blank fragment layout -->
 
     <android.support.v4.widget.NestedScrollView
+        android:id="@+id/operateScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             android:padding="@dimen/linear_layout_padding"
-            android:weightSum="4"
             tools:layout_editor_absoluteX="8dp"
             tools:layout_editor_absoluteY="33dp">
 
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_margin="@dimen/card_layout_margin"
-                android:layout_weight="1"
                 app:cardCornerRadius="@dimen/card_cornerRadius"
                 app:cardElevation="@dimen/card_cardElevation"
                 app:contentPadding="@dimen/card_contentPadding">
@@ -40,7 +39,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="@dimen/linear_layout_item_padding"
-                        android:text="Ultima Lectura"
+                        android:text="Seleccionar Perfil"
                         android:textAlignment="center"
                         android:textColor="@color/md_blue_grey_900"
                         android:textSize="@dimen/text_title_size" />
@@ -60,20 +59,26 @@
                         android:padding="@dimen/linear_layout_item_padding"
                         android:weightSum="1">
 
+                        <RadioButton
+                            android:id="@+id/radioPerfil1Button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".01" />
+
                         <TextView
-                            android:id="@+id/textView1"
+                            android:id="@+id/nombrePerfil1TextView"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight=".75"
-                            android:text="Hora Ultima Lectura"
+                            android:layout_weight=".74"
+                            android:text="Perfil 1"
                             android:textSize="@dimen/text_subtitle_size" />
 
                         <TextView
-                            android:id="@+id/conectFechaText"
+                            android:id="@+id/valorPerfil1Text"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight=".25"
-                            android:text="FECHORA"
+                            android:text="Medio"
                             android:textSize="@dimen/text_subtitle_size" />
                     </LinearLayout>
 
@@ -92,116 +97,26 @@
                         android:padding="@dimen/linear_layout_item_padding"
                         android:weightSum="1">
 
+                        <RadioButton
+                            android:id="@+id/radioPerfil2Button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".01" />
+
                         <TextView
-                            android:id="@+id/textView2"
+                            android:id="@+id/nombrePerfil2TextView"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight=".75"
-                            android:text="Radiacion Solar (KW/m2)"
+                            android:layout_weight=".74"
+                            android:text="Perfil 2"
                             android:textSize="@dimen/text_subtitle_size" />
 
                         <TextView
-                            android:id="@+id/conectRadiacionText"
+                            android:id="@+id/valorPerfil2Text"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight=".25"
-                            android:text="0.55"
-                            android:textSize="@dimen/text_subtitle_size" />
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="fill_parent"
-                        android:layout_height="3dp"
-                        android:layout_marginBottom="@dimen/linear_layout_margin_item"
-                        android:layout_marginTop="@dimen/linear_layout_margin_item"
-                        android:background="@color/md_grey_400"
-                        android:visibility="visible" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="@dimen/linear_layout_item_padding"
-                        android:weightSum="1">
-
-                        <TextView
-                            android:id="@+id/textView3"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight=".75"
-                            android:text="Potencia entregada"
-                            android:textSize="@dimen/text_subtitle_size" />
-
-                        <TextView
-                            android:id="@+id/conectPotenciaText"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight=".25"
-                            android:text="5.9 W"
-                            android:textSize="@dimen/text_subtitle_size" />
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="fill_parent"
-                        android:layout_height="3dp"
-                        android:layout_marginBottom="@dimen/linear_layout_margin_item"
-                        android:layout_marginTop="@dimen/linear_layout_margin_item"
-                        android:background="@color/md_grey_400"
-                        android:visibility="visible" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="@dimen/linear_layout_item_padding"
-                        android:weightSum="1">
-
-                        <TextView
-                            android:id="@+id/textView4"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight=".75"
-                            android:text="Temperatura ambiente"
-                            android:textSize="@dimen/text_subtitle_size" />
-
-                        <TextView
-                            android:id="@+id/conectTemperaturaText"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight=".25"
-                            android:text="14º"
-                            android:textSize="@dimen/text_subtitle_size" />
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="fill_parent"
-                        android:layout_height="3dp"
-                        android:layout_marginBottom="@dimen/linear_layout_margin_item"
-                        android:layout_marginTop="@dimen/linear_layout_margin_item"
-                        android:background="@color/md_grey_400"
-                        android:visibility="visible" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="@dimen/linear_layout_item_padding"
-                        android:weightSum="1">
-
-                        <TextView
-                            android:id="@+id/textView5"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight=".75"
-                            android:text="Humedad ambiente"
-                            android:textSize="@dimen/text_subtitle_size" />
-
-                        <TextView
-                            android:id="@+id/conectHumedadText"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight=".25"
-                            android:text="38%"
+                            android:text="Alto"
                             android:textSize="@dimen/text_subtitle_size" />
                     </LinearLayout>
 
@@ -210,50 +125,19 @@
 
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_margin="@dimen/card_layout_margin"
-                android:layout_weight="1"
                 app:cardCornerRadius="@dimen/card_cornerRadius"
                 app:cardElevation="@dimen/card_cardElevation"
                 app:contentPadding="@dimen/card_contentPadding">
 
-                <RelativeLayout
-                    android:id="@+id/relativeLayout1"
+                <de.codecrafters.tableview.TableView
+                    android:id="@+id/tableView"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="@dimen/card_relative_layout_padding">
-
-                    <TextView
-                        android:id="@+id/textView12"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_centerHorizontal="true"
-                        android:layout_centerInParent="true"
-                        android:text="Sincronizar"
-                        android:textSize="18sp" />
-
-                    <ImageButton
-                        android:id="@+id/conectBluetoohButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerHorizontal="true"
-                        android:layout_centerInParent="true"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:src="@mipmap/ic_bluetooth" />
-
-                    <ImageButton
-                        android:id="@+id/conectUsbButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_gravity="center"
-                        android:layout_toStartOf="@+id/conectBluetoohButton"
-                        android:gravity="center"
-                        android:src="@mipmap/ic_usb" />
-                </RelativeLayout>
+                    android:layout_height="600dp"
+                    android:layout_margin="@dimen/card_layout_margin"
+                    app:tableView_headerColor="@color/md_blue_grey_300"
+                    app:tableView_columnCount="5" />
             </android.support.v7.widget.CardView>
 
         </LinearLayout>

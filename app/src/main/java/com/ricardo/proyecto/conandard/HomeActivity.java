@@ -22,18 +22,13 @@ public class HomeActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private boolean toggleTheme = true;
 
     private ArduinoManager arduinoManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        toggleTheme = sp.getBoolean("theme",true);
-        setTheme(toggleTheme?R.style.AppTheme_Blue:R.style.AppTheme_Red);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -98,7 +93,7 @@ public class HomeActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new OperateFragment(), "INICIO");
-        adapter.addFragment(new ConectFragment(), "CONECCION");
+        adapter.addFragment(new ConectFragment(), "CONEXION");
         adapter.addFragment(new LogFragment(), "LOG");
         viewPager.setAdapter(adapter);
     }

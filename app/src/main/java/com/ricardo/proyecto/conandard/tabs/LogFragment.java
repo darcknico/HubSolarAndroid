@@ -1,12 +1,10 @@
 package com.ricardo.proyecto.conandard.tabs;
 
-import android.graphics.drawable.Drawable;
 import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +15,10 @@ import android.widget.TextView;
 
 import com.ricardo.proyecto.conandard.R;
 import com.ricardo.proyecto.conandard.manager.ArduinoManager;
+import com.ricardo.proyecto.conandard.repositorio.DBManager;
+import com.ricardo.proyecto.conandard.repositorio.HubSolarDBHelper;
 import com.ricardo.proyecto.conandard.repositorio.Singleton;
+import com.ricardo.proyecto.conandard.utils.HeatIndexCalculator;
 
 import eu.basicairdata.bluetoothhelper.BluetoothHelper;
 import me.aflak.arduino.ArduinoListener;
@@ -31,10 +32,6 @@ public class LogFragment extends Fragment {
     private ImageButton logLogButton;
     private ImageButton logQueryButton;
 
-    private Drawable logImportDrawable;
-    private Drawable logLogDrawable;
-    private Drawable logQueryDrawable;
-
     private ArduinoManager arduinoManager;
 
     private View v;
@@ -42,13 +39,9 @@ public class LogFragment extends Fragment {
     private StringBuilder sb;
     private Singleton singleton;
 
+    private DBManager dbManager;
     public LogFragment() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -65,9 +58,7 @@ public class LogFragment extends Fragment {
         logTextView = (TextView) v.findViewById(R.id.logTextView);
         requestEditText = (EditText) v.findViewById(R.id.requestEditText);
 
-        logImportDrawable = logImportButton.getBackground();
-        logLogDrawable = logLogButton.getBackground();
-        logQueryDrawable = logQueryButton.getBackground();
+        dbManager = (new DBManager(getActivity().getApplicationContext())).open();
 
         logTextView.setMovementMethod(new ScrollingMovementMethod());
 
@@ -81,14 +72,10 @@ public class LogFragment extends Fragment {
                 if(arduinoManager.getUsbHelper().isOpened() || arduinoManager.getBluetoothHelper().isConnected()) {
                     if (!singleton.isQuery() && !singleton.isImportar() && !singleton.isLOG() && !singleton.isBackup()) {
                         singleton.setLOG(true);
-                        if (singleton.isLOG()) {
-                            singleton.setEnviado(true);
-                            logLogButton.setBackgroundResource(R.color.imageButtonPress);
-                        } else {
-                            logLogButton.setBackground(logLogDrawable);
-                        }
+                        arduinoManager.enviar(ArduinoManager.LOG);
+                        logLogButton.setPressed(true);
                     } else {
-                        logLogButton.setBackground(logLogDrawable);
+                        logLogButton.setPressed(false);
                         singleton.setLOG(false);
                     }
                 }
@@ -101,10 +88,8 @@ public class LogFragment extends Fragment {
                 if(arduinoManager.getUsbHelper().isOpened() || arduinoManager.getBluetoothHelper().isConnected()) {
                     if (!singleton.isQuery() && !singleton.isImportar() && !singleton.isLOG() && !singleton.isBackup()) {
                         singleton.setQuery(true);
-                    }
-                    if (singleton.isQuery()) {
-                        singleton.setEnviado(true);
-                        logQueryButton.setBackgroundResource(R.color.imageButtonPress);
+                        logQueryButton.setPressed(true);
+                        arduinoManager.enviar(ArduinoManager.SELECTALL);
                     }
                 }
             }
@@ -116,10 +101,8 @@ public class LogFragment extends Fragment {
                 if(arduinoManager.getUsbHelper().isOpened() || arduinoManager.getBluetoothHelper().isConnected()) {
                     if (!singleton.isQuery() && !singleton.isImportar() && !singleton.isLOG() && !singleton.isBackup()) {
                         singleton.setImportar(true);
-                    }
-                    if (singleton.isImportar()) {
-                        enviar(ArduinoManager.LOG);
-                        logImportButton.setBackgroundResource(R.color.imageButtonPress);
+                        logImportButton.setPressed(true);
+                        arduinoManager.enviar(ArduinoManager.INSERT);
                     }
                 }
             }
@@ -135,11 +118,17 @@ public class LogFragment extends Fragment {
             public void onBluetoothHelperConnectionStateChanged(BluetoothHelper bluetoothhelper, boolean isConnected) {
                 if(isConnected){
                     snackbar("Dispositivo conectado por Bluetooth.");
+                    if(singleton.getBluethootButton()!=null){
+                        singleton.getBluethootButton().setPressed(true);
+                    }
                 } else {
                     singleton.setImportar(false);
                     singleton.setLOG(false);
                     singleton.setQuery(false);
                     snackbar("Dispositivo desconectado por Bluetooth.");
+                    if(singleton.getBluethootButton()!=null){
+                        singleton.getBluethootButton().setPressed(false);
+                    }
                 }
             }
         });
@@ -148,6 +137,9 @@ public class LogFragment extends Fragment {
             @Override
             public void onArduinoAttached(UsbDevice device) {
                 snackbar("Dispositivo conectado por USB exitosamente.");
+                if(singleton.getUsbButton()!=null){
+                    singleton.getUsbButton().setPressed(true);
+                }
                 arduinoManager.getUsbHelper().open(device);
             }
 
@@ -157,6 +149,9 @@ public class LogFragment extends Fragment {
                 singleton.setLOG(false);
                 singleton.setQuery(false);
                 snackbar("Dispositivo desconectado por USB.");
+                if(singleton.getUsbButton()!=null){
+                    singleton.getUsbButton().setPressed(false);
+                }
             }
 
             @Override
@@ -190,25 +185,52 @@ public class LogFragment extends Fragment {
     public void capturador(String referencia,String message){
         if(singleton.isLOG()) {
             display(referencia + message);
-            enviar(ArduinoManager.LOG);
-        }
-        if(singleton.isQuery()){
+            arduinoManager.enviar(ArduinoManager.LOG);
+        } else if(singleton.isQuery()){
             display(referencia + message);
             if (message.contains("FIN")){
-                logQueryButton.setBackground(logQueryDrawable);
-                singleton.notQuery();
+                logQueryButton.setPressed(false);
+                singleton.setQuery(false);
             }
-        }
-        if(singleton.isImportar()){
+        } else if(singleton.isImportar()){
             display(referencia + message);
-            logImportButton.setBackground(logImportDrawable);
+            logImportButton.setPressed(false);
             singleton.notImportar();
-        }
-        if(singleton.isBackup()){
+        } else if(singleton.isBackup()){
             display(referencia + message);
-            if (message.contains("FIN")){
-                logQueryButton.setBackground(logQueryDrawable);
-                singleton.notQuery();
+            if (message.contains("BACKUP")){
+                singleton.setBackup(false);
+                if(singleton.getBackupButton()!=null){
+                    singleton.getBackupButton().setPressed(false);
+                }
+            } else {
+                String[] messageSplit = message.split(";");
+                if(messageSplit.length>4){
+                    String id = messageSplit[0];
+                    String temperatura = messageSplit[1];
+                    String humedad = messageSplit[2];
+                    String indice_calor = String.valueOf(HeatIndexCalculator.calculateHeatIndex(Integer.valueOf(temperatura),Double.valueOf(humedad)));
+                    String radiacion_solar = "40";
+                    String intensidad_corriente = "40";
+                    String voltaje = "6";
+                    String potencia = "2";
+                    Long latitud = 0l;
+                    Long longitud = 0l;
+                    String fecha_hora = messageSplit[3]+" "+messageSplit[4];
+
+                    dbManager.insert(
+                            humedad,
+                            temperatura,
+                            indice_calor,
+                            radiacion_solar,
+                            intensidad_corriente,
+                            voltaje,
+                            potencia,
+                            latitud,
+                            longitud,
+                            fecha_hora
+                    );
+                }
             }
         }
     }
@@ -225,14 +247,6 @@ public class LogFragment extends Fragment {
                     logTextView.scrollTo(0, 0);
             }
         });
-    }
-
-    public void enviar(String texto){
-        if(arduinoManager.getUsbHelper().isOpened()) {
-            arduinoManager.getUsbHelper().send(texto.getBytes());
-        } else if(arduinoManager.getBluetoothHelper().isConnected()){
-            arduinoManager.getBluetoothHelper().SendMessage(texto);
-        }
     }
 
     public void snackbar(String message){

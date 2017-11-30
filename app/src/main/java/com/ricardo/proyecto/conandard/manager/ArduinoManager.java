@@ -43,4 +43,12 @@ public final class ArduinoManager {
         }
         return arduinoManager;
     }
+
+    public void enviar(String texto){
+        if(arduinoManager.getUsbHelper().isOpened()) {
+            arduinoManager.getUsbHelper().send(texto.getBytes());
+        } else if(arduinoManager.getBluetoothHelper().isConnected()){
+            arduinoManager.getBluetoothHelper().SendMessage(texto);
+        }
+    }
 }

@@ -27,21 +27,14 @@ public class ConectFragment extends Fragment {
     private ImageButton conectCloudButton;
     private ImageButton conectImportButton;
 
-    private Drawable initialUsbButton;
-    private Drawable initialBluetoothButton;
-
     private ArduinoManager arduinoManager;
 
     private View v;
     private FrameLayout frameLayout;
+    private Singleton singleton;
 
     public ConectFragment() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -59,16 +52,18 @@ public class ConectFragment extends Fragment {
 
         arduinoManager = ArduinoManager.getInstance();
 
-        //guardando el background inicial
-        initialUsbButton = conectUsbButton.getBackground();
-        initialBluetoothButton = conectBluetoohButton.getBackground();
+        singleton = Singleton.getInstance();
+
+        singleton.setUsbButton(conectUsbButton);
+        singleton.setBluethootButton(conectBluetoohButton);
+        singleton.setBackupButton(conectImportButton);
 
         if(arduinoManager.getUsbHelper().isOpened()){
-            conectUsbButton.setBackgroundResource(R.color.imageButtonPress);
+            conectUsbButton.setPressed(true);
         }
 
         if(arduinoManager.getBluetoothHelper().isConnected()){
-            conectBluetoohButton.setBackgroundColor(Color.BLUE);
+            conectBluetoohButton.setPressed(true);
         }
 
         conectBluetoohButton.setOnClickListener(new View.OnClickListener() {
@@ -85,7 +80,6 @@ public class ConectFragment extends Fragment {
                             arduinoManager.getBluetoothHelper().Connect("HubSolar");
                         } else {
                             arduinoManager.getBluetoothHelper().Disconnect();
-                            conectBluetoohButton.setBackground(initialBluetoothButton);
                             snackbar("Bluetooth desconectado.");
                         }
 
@@ -99,7 +93,7 @@ public class ConectFragment extends Fragment {
             public void onClick(View v) {
                 if(arduinoManager.getUsbHelper().isOpened()){
                     arduinoManager.getUsbHelper().close();
-                    conectUsbButton.setBackground(initialUsbButton);
+                    conectUsbButton.setPressed(true);
                 }
             }
         });
@@ -107,7 +101,13 @@ public class ConectFragment extends Fragment {
         conectImportButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if(arduinoManager.getUsbHelper().isOpened() || arduinoManager.getBluetoothHelper().isConnected()) {
+                    if (!singleton.isQuery() && !singleton.isImportar() && !singleton.isLOG() && !singleton.isBackup()) {
+                        singleton.setBackup(true);
+                        arduinoManager.enviar(ArduinoManager.BACKUP);
+                        conectImportButton.setPressed(true);
+                    }
+                }
             }
         });
 
@@ -119,17 +119,16 @@ public class ConectFragment extends Fragment {
     @Override
     public void onResume() {
         if(arduinoManager.getUsbHelper().isOpened()){
-            conectUsbButton.setBackgroundResource(R.color.imageButtonPress);
+            conectUsbButton.setPressed(true);
             if(arduinoManager.getBluetoothHelper().isConnected()) {
                 arduinoManager.getBluetoothHelper().Disconnect();
             }
-            conectBluetoohButton.setBackground(initialBluetoothButton);
-            snackbar("Dispositivo conectado por USB exitosamente");
+            conectBluetoohButton.setPressed(false);
         } else {
-            conectUsbButton.setBackground(initialUsbButton);
+            conectUsbButton.setPressed(false);
         }
         if(arduinoManager.getBluetoothHelper().isConnected()) {
-            conectBluetoohButton.setBackgroundResource(R.color.imageButtonPress);
+            conectBluetoohButton.setPressed(true);
         }
         super.onResume();
     }
