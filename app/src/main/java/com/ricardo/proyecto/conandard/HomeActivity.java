@@ -60,6 +60,11 @@ public class HomeActivity extends AppCompatActivity {
                 arduinoManager.getUsbHelper().close();
             }
         }
+        if(arduinoManager.getBluetoothHelper()!=null){
+            if(arduinoManager.getBluetoothHelper().isConnected()) {
+                arduinoManager.getBluetoothHelper().Disconnect();
+            }
+        }
         super.onDestroy();
     }
 

@@ -216,7 +216,7 @@ http://www.google.com/design/spec/style/color.html#color-ui-color-palette -->
     <color name="md_yellow_A700">#FFD600</color>
 
     <!--amber-->
-    <color name="md_amber_50">#FFF8E1</color>
+    <color name="md_amber_50">#fff8e1</color>
     <color name="md_amber_100">#FFECB3</color>
     <color name="md_amber_200">#FFE082</color>
     <color name="md_amber_300">#FFD54F</color>

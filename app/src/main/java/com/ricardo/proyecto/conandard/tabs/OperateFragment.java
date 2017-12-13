@@ -11,7 +11,10 @@ import android.support.v4.widget.NestedScrollView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RadioButton;
+import android.widget.TextView;
 
 import com.ricardo.proyecto.conandard.R;
 import com.ricardo.proyecto.conandard.repositorio.DBManager;
@@ -43,6 +46,11 @@ public class OperateFragment extends Fragment {
     private MedicionTableDataAdapter medicionTableDataAdapter;
     private ArrayList<FranjaHoraria> list;
     private DBManager dbManager;
+    private TextView operateFechaTextVew;
+    private ImageView operatePreviousButton;
+    private ImageView operateNextButton;
+    private Date fechaModificable,fechaActual;
+    private SimpleDateFormat formatoLocal;
 
     public OperateFragment() {
         // Required empty public constructor
@@ -56,6 +64,9 @@ public class OperateFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_operate, container, false);
         operateScrollView = (NestedScrollView) view.findViewById(R.id.operateScrollView);
+        operateFechaTextVew = (TextView) view.findViewById(R.id.operateFechaTextView);
+        operatePreviousButton = (ImageView) view.findViewById(R.id.operatePreviousButton);
+        operateNextButton = (ImageView) view.findViewById(R.id.operateNextButton);
         tableView = (TableView) view.findViewById(R.id.tableView);
         tableView.setColumnCount(5);
 
@@ -84,8 +95,14 @@ public class OperateFragment extends Fragment {
         radioPerfil1Button = (RadioButton)view.findViewById(R.id.radioPerfil1Button);
         radioPerfil2Button = (RadioButton)view.findViewById(R.id.radioPerfil2Button);
 
-        dbManager = (new DBManager(getActivity().getApplicationContext())).open();
+        fechaModificable = new Date();
+        fechaActual = new Date();
+        formatoLocal = new SimpleDateFormat("dd/MM/yyyy");
+        operateFechaTextVew.setText(formatoLocal.format(fechaModificable));
+        operateNextButton.setVisibility(View.INVISIBLE);
+
         SimpleDateFormat s = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+        dbManager = (new DBManager(getActivity().getApplicationContext())).open();
         Cursor cursor = dbManager.fetch();
         int count = cursor.getCount();
         try {
@@ -217,6 +234,32 @@ public class OperateFragment extends Fragment {
                         operateScrollView.fullScroll(operateScrollView.FOCUS_DOWN);
                     }
                 });
+            }
+        });
+        operatePreviousButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                operateNextButton.setVisibility(View.VISIBLE);
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(fechaModificable);
+                cal.add(Calendar.DATE, -1);
+                fechaModificable = cal.getTime();
+                operateFechaTextVew.setText(formatoLocal.format(fechaModificable));
+            }
+        });
+        operateNextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(fechaModificable.before(fechaActual)) {
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(fechaModificable);
+                    cal.add(Calendar.DATE, 1);
+                    fechaModificable = cal.getTime();
+                    operateFechaTextVew.setText(formatoLocal.format(fechaModificable));
+                    if(fechaActual.equals(fechaModificable)) {
+                        operateNextButton.setVisibility(View.INVISIBLE);
+                    }
+                }
             }
         });
         super.onViewCreated(view, savedInstanceState);

@@ -2,9 +2,13 @@ package com.ricardo.proyecto.conandard.tabs;
 
 import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +23,8 @@ import com.ricardo.proyecto.conandard.repositorio.DBManager;
 import com.ricardo.proyecto.conandard.repositorio.HubSolarDBHelper;
 import com.ricardo.proyecto.conandard.repositorio.Singleton;
 import com.ricardo.proyecto.conandard.utils.HeatIndexCalculator;
+
+import java.security.Key;
 
 import eu.basicairdata.bluetoothhelper.BluetoothHelper;
 import me.aflak.arduino.ArduinoListener;
@@ -39,7 +45,15 @@ public class LogFragment extends Fragment {
     private StringBuilder sb;
     private Singleton singleton;
 
+    private long mLastClickTime = 0;
+
     private DBManager dbManager;
+    private ImageButton requestHelpButton;
+
+    private String scopeTerminal = "&: ";
+    private String scopeUSB = "$: ";
+    private String scopeBluetooth = "#: ";
+
     public LogFragment() {
         // Required empty public constructor
     }
@@ -57,6 +71,8 @@ public class LogFragment extends Fragment {
         logQueryButton = (ImageButton) v.findViewById(R.id.logQueryButton);
         logTextView = (TextView) v.findViewById(R.id.logTextView);
         requestEditText = (EditText) v.findViewById(R.id.requestEditText);
+        requestHelpButton = (ImageButton) v.findViewById(R.id.requestHelpButton);
+
 
         dbManager = (new DBManager(getActivity().getApplicationContext())).open();
 
@@ -66,9 +82,21 @@ public class LogFragment extends Fragment {
 
         singleton = Singleton.getInstance();
 
+
+
+        return v;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         logLogButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 2000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 if(arduinoManager.getUsbHelper().isOpened() || arduinoManager.getBluetoothHelper().isConnected()) {
                     if (!singleton.isQuery() && !singleton.isImportar() && !singleton.isLOG() && !singleton.isBackup()) {
                         singleton.setLOG(true);
@@ -85,6 +113,13 @@ public class LogFragment extends Fragment {
         logQueryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                for (int i = 0 ; i<125;i++){
+                    display(String.valueOf(i)+" pRuEbA");
+                }
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 2000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 if(arduinoManager.getUsbHelper().isOpened() || arduinoManager.getBluetoothHelper().isConnected()) {
                     if (!singleton.isQuery() && !singleton.isImportar() && !singleton.isLOG() && !singleton.isBackup()) {
                         singleton.setQuery(true);
@@ -98,6 +133,10 @@ public class LogFragment extends Fragment {
         logImportButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 2000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 if(arduinoManager.getUsbHelper().isOpened() || arduinoManager.getBluetoothHelper().isConnected()) {
                     if (!singleton.isQuery() && !singleton.isImportar() && !singleton.isLOG() && !singleton.isBackup()) {
                         singleton.setImportar(true);
@@ -111,7 +150,7 @@ public class LogFragment extends Fragment {
         arduinoManager.getBluetoothHelper().setBluetoothHelperListener(new BluetoothHelper.BluetoothHelperListener() {
             @Override
             public void onBluetoothHelperMessageReceived(BluetoothHelper bluetoothhelper, String message) {
-                capturador("#: ",message);
+                capturador(scopeBluetooth,message);
             }
 
             @Override
@@ -159,7 +198,7 @@ public class LogFragment extends Fragment {
                 sb.append( new String(bytes));
                 if(sb.toString().contains("\n")){
                     String parte[]=sb.toString().split("\n");
-                    capturador("$: ",parte[0]);
+                    capturador(scopeUSB,parte[0]);
                     sb = new StringBuilder();
                     boolean primero = true;
                     for(String str :parte){
@@ -179,10 +218,64 @@ public class LogFragment extends Fragment {
             }
         });
 
-        return v;
+        requestEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 2000){
+                    return true;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+                if(i == KeyEvent.KEYCODE_ENDCALL || i == KeyEvent.KEYCODE_ENTER){
+                    String mensaje = textView.getText().toString();
+                    String comando = "";
+                    switch (mensaje){
+                        case ArduinoManager.LOG:
+                            comando = "LOG";
+                            break;
+                        case ArduinoManager.SELECTALL:
+                            comando = " - SELECTALL";
+                            break;
+                        case ArduinoManager.DELETE:
+                            comando = " - DELETE";
+                            break;
+                        case ArduinoManager.INSERT:
+                            comando = " - INSERT";
+                            break;
+                        case ArduinoManager.COUNT:
+                            comando = " - COUNT";
+                            break;
+                        case ArduinoManager.BACKUP:
+                            comando = " - BACKUP";
+                            break;
+                            default:
+                                comando = " - desconocido";
+                    }
+                    display(scopeTerminal+mensaje+comando);
+                    arduinoManager.enviar(mensaje);
+                    requestEditText.setText("");
+                }
+                return true;
+            }
+        });
+
+        requestHelpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 2000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+                display(scopeTerminal+ArduinoManager.LOG+" - Realiza una lectura");
+                display(scopeTerminal+ArduinoManager.SELECTALL+" - Recupera todos los registros del archivo activo");
+                display(scopeTerminal+ArduinoManager.DELETE+" - Elimina los registros del archivo activo");
+                display(scopeTerminal+ArduinoManager.INSERT+" - Recupera e Inserta una lectura en el archivo activo");
+                display(scopeTerminal+ArduinoManager.COUNT+" - Cantidad de registros en el archivo activo");
+                display(scopeTerminal+ArduinoManager.BACKUP+" - Copia los registros en un nuevo archivo y elimina elimina los registros en el archivo activo");
+            }
+        });
     }
 
-    public void capturador(String referencia,String message){
+    public void capturador(String referencia, String message){
         if(singleton.isLOG()) {
             display(referencia + message);
             arduinoManager.enviar(ArduinoManager.LOG);
@@ -253,4 +346,9 @@ public class LogFragment extends Fragment {
         Snackbar.make(frameLayout,message,Snackbar.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onResume() {
+
+        super.onResume();
+    }
 }

@@ -81,6 +81,18 @@ public class DBManager {
         return cursor;
     }
 
+    public Cursor lastInsert(){
+        String selectQuery= "SELECT * FROM " + HubSolarDBHelper.TABLE_NAME+" ORDER BY "+HubSolarDBHelper._ID+" DESC LIMIT 1";
+        Cursor cursor = database.rawQuery(selectQuery, null);
+        return cursor;
+    }
+
+    public Cursor fetch(String fecha){
+        String selectQuery= "SELECT * FROM " + HubSolarDBHelper.TABLE_NAME+" WHERE "+HubSolarDBHelper.FECHA_HORA+" LIKE '"+fecha+"%' ";
+        Cursor cursor = database.rawQuery(selectQuery, null);
+        return cursor;
+    }
+
     public int update(long _id, String fecha_hora_subido, int id_subido) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(HubSolarDBHelper.FECHA_HORA_SUBIDO, fecha_hora_subido);
