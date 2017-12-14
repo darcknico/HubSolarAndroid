@@ -46,7 +46,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:weightSum="3">
+                android:weightSum="4">
 
                 <ImageButton
                     android:id="@+id/logLogButton"
@@ -77,6 +77,16 @@
                     android:adjustViewBounds="false"
                     android:cropToPadding="false"
                     app:srcCompat="@mipmap/ic_insert" />
+
+                <ImageButton
+                    android:id="@+id/logClearImport"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="false"
+                    android:cropToPadding="false"
+                    android:src="@mipmap/ic_clear_screen" />
             </LinearLayout>
 
 

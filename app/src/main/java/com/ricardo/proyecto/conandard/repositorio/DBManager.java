@@ -69,6 +69,10 @@ public class DBManager {
                 HubSolarDBHelper.HUMEDAD,
                 HubSolarDBHelper.TEMPERATURA,
                 HubSolarDBHelper.INDICE_CALOR,
+                HubSolarDBHelper.RADIACION_SOLAR,
+                HubSolarDBHelper.INTESIDAD_CORRIENTE,
+                HubSolarDBHelper.VOLTAJE,
+                HubSolarDBHelper.POTENCIA,
                 HubSolarDBHelper.LATITUD,
                 HubSolarDBHelper.LONGITUD,
                 HubSolarDBHelper.FECHA_HORA,
@@ -82,14 +86,34 @@ public class DBManager {
     }
 
     public Cursor lastInsert(){
-        String selectQuery= "SELECT * FROM " + HubSolarDBHelper.TABLE_NAME+" ORDER BY "+HubSolarDBHelper._ID+" DESC LIMIT 1";
+        String selectQuery= "SELECT * FROM " + HubSolarDBHelper.TABLE_NAME+" ORDER BY "+HubSolarDBHelper._ID+" DESC LIMIT 1 ";
         Cursor cursor = database.rawQuery(selectQuery, null);
         return cursor;
     }
 
     public Cursor fetch(String fecha){
-        String selectQuery= "SELECT * FROM " + HubSolarDBHelper.TABLE_NAME+" WHERE "+HubSolarDBHelper.FECHA_HORA+" LIKE '"+fecha+"%' ";
-        Cursor cursor = database.rawQuery(selectQuery, null);
+        String[] columns = new String[] {
+                HubSolarDBHelper._ID,
+                HubSolarDBHelper.HUMEDAD,
+                HubSolarDBHelper.TEMPERATURA,
+                HubSolarDBHelper.INDICE_CALOR,
+                HubSolarDBHelper.RADIACION_SOLAR,
+                HubSolarDBHelper.INTESIDAD_CORRIENTE,
+                HubSolarDBHelper.VOLTAJE,
+                HubSolarDBHelper.POTENCIA,
+                HubSolarDBHelper.LATITUD,
+                HubSolarDBHelper.LONGITUD,
+                HubSolarDBHelper.FECHA_HORA,
+                HubSolarDBHelper.UUID,
+        };
+        Cursor cursor = database.query(
+                HubSolarDBHelper.TABLE_NAME,
+                columns,
+                HubSolarDBHelper.FECHA_HORA + " like ? ",
+                new String[]{fecha+"%"},
+                null,
+                null,
+                null);
         return cursor;
     }
 

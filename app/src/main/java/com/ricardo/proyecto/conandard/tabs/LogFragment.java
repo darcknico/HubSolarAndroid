@@ -25,6 +25,8 @@ import com.ricardo.proyecto.conandard.repositorio.Singleton;
 import com.ricardo.proyecto.conandard.utils.HeatIndexCalculator;
 
 import java.security.Key;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import eu.basicairdata.bluetoothhelper.BluetoothHelper;
 import me.aflak.arduino.ArduinoListener;
@@ -37,6 +39,7 @@ public class LogFragment extends Fragment {
     private ImageButton logImportButton;
     private ImageButton logLogButton;
     private ImageButton logQueryButton;
+    private ImageButton logClearImport;
 
     private ArduinoManager arduinoManager;
 
@@ -69,6 +72,7 @@ public class LogFragment extends Fragment {
         logImportButton = (ImageButton) v.findViewById(R.id.logImportButton);
         logLogButton = (ImageButton) v.findViewById(R.id.logLogButton);
         logQueryButton = (ImageButton) v.findViewById(R.id.logQueryButton);
+        logClearImport = (ImageButton) v.findViewById(R.id.logClearImport);
         logTextView = (TextView) v.findViewById(R.id.logTextView);
         requestEditText = (EditText) v.findViewById(R.id.requestEditText);
         requestHelpButton = (ImageButton) v.findViewById(R.id.requestHelpButton);
@@ -81,8 +85,21 @@ public class LogFragment extends Fragment {
         arduinoManager = ArduinoManager.getInstance();
 
         singleton = Singleton.getInstance();
-
-
+        /*
+        SimpleDateFormat formatoGlobal = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+        dbManager.insert(
+                "53",
+                "27",
+                "9",
+                "9",
+                "0",
+                "0",
+                "0",
+                0l,
+                0l,
+                formatoGlobal.format(new Date())
+        );
+        */
 
         return v;
     }
@@ -113,9 +130,6 @@ public class LogFragment extends Fragment {
         logQueryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (int i = 0 ; i<125;i++){
-                    display(String.valueOf(i)+" pRuEbA");
-                }
                 if (SystemClock.elapsedRealtime() - mLastClickTime < 2000){
                     return;
                 }
@@ -146,6 +160,12 @@ public class LogFragment extends Fragment {
                 }
             }
         });
+        logClearImport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                logTextView.setText("");
+            }
+        });
 
         arduinoManager.getBluetoothHelper().setBluetoothHelperListener(new BluetoothHelper.BluetoothHelperListener() {
             @Override
@@ -160,6 +180,11 @@ public class LogFragment extends Fragment {
                     if(singleton.getBluethootButton()!=null){
                         singleton.getBluethootButton().setPressed(true);
                     }
+
+                    singleton.setImportar(true);
+                    logImportButton.setPressed(true);
+                    arduinoManager.enviar(ArduinoManager.INSERT);
+
                 } else {
                     singleton.setImportar(false);
                     singleton.setLOG(false);
@@ -180,6 +205,10 @@ public class LogFragment extends Fragment {
                     singleton.getUsbButton().setPressed(true);
                 }
                 arduinoManager.getUsbHelper().open(device);
+
+                singleton.setImportar(true);
+                logImportButton.setPressed(true);
+                arduinoManager.enviar(ArduinoManager.INSERT);
             }
 
             @Override
@@ -230,7 +259,7 @@ public class LogFragment extends Fragment {
                     String comando = "";
                     switch (mensaje){
                         case ArduinoManager.LOG:
-                            comando = "LOG";
+                            comando = " - LOG";
                             break;
                         case ArduinoManager.SELECTALL:
                             comando = " - SELECTALL";
@@ -286,6 +315,33 @@ public class LogFragment extends Fragment {
                 singleton.setQuery(false);
             }
         } else if(singleton.isImportar()){
+            String[] messageSplit = message.split(";");
+            if(messageSplit.length>3){
+                String id = messageSplit[0];
+                String temperatura = messageSplit[1];
+                String humedad = messageSplit[2];
+                String indice_calor = String.valueOf(HeatIndexCalculator.calculateHeatIndex(Integer.valueOf(temperatura),Double.valueOf(humedad)));
+                String radiacion_solar = "40";
+                String intensidad_corriente = "40";
+                String voltaje = "6";
+                String potencia = "2";
+                Long latitud = 0l;
+                Long longitud = 0l;
+                String fecha_hora = messageSplit[3]+" "+messageSplit[4];
+
+                dbManager.insert(
+                        humedad,
+                        temperatura,
+                        indice_calor,
+                        radiacion_solar,
+                        intensidad_corriente,
+                        voltaje,
+                        potencia,
+                        latitud,
+                        longitud,
+                        fecha_hora
+                );
+            }
             display(referencia + message);
             logImportButton.setPressed(false);
             singleton.notImportar();
@@ -298,7 +354,7 @@ public class LogFragment extends Fragment {
                 }
             } else {
                 String[] messageSplit = message.split(";");
-                if(messageSplit.length>4){
+                if(messageSplit.length>3){
                     String id = messageSplit[0];
                     String temperatura = messageSplit[1];
                     String humedad = messageSplit[2];

@@ -6,10 +6,11 @@ package com.ricardo.proyecto.conandard.tabla;
 
 public class FranjaHoraria {
     private String hora;
-    private String radiacionSolar;
-    private String intensidadCorriente;
-    private String voltaje;
-    private String potencia;
+    private String radiacionSolar= "0";
+    private String intensidadCorriente= "0";
+    private String voltaje= "0";
+    private String potencia= "0";
+    private int count = 0;
 
     private double radiacionSolarDouble = 0;
     private double intensidadCorrienteDouble = 0;
@@ -35,7 +36,10 @@ public class FranjaHoraria {
 
     public String getRadiacionSolar() {
         if(radiacionSolarDouble>0){
-            return String.valueOf(getRadiacionSolarDouble());
+            if(count==0){
+                return String.valueOf(0);
+            }
+            return String.valueOf(getRadiacionSolarDouble()/count);
         }
         return radiacionSolar;
     }
@@ -46,7 +50,10 @@ public class FranjaHoraria {
 
     public String getIntensidadCorriente() {
         if(intensidadCorrienteDouble>0){
-            return String.valueOf(getIntensidadCorrienteDouble());
+            if(count==0){
+                return String.valueOf(0);
+            }
+            return String.valueOf(getIntensidadCorrienteDouble()/count);
         }
         return intensidadCorriente;
     }
@@ -57,7 +64,10 @@ public class FranjaHoraria {
 
     public String getVoltaje() {
         if(getVoltajeDouble()>0){
-            return String.valueOf(getVoltajeDouble());
+            if(count==0){
+                return String.valueOf(0);
+            }
+                return String.valueOf(getVoltajeDouble()/count);
         }
         return voltaje;
     }
@@ -68,7 +78,10 @@ public class FranjaHoraria {
 
     public String getPotencia() {
         if(potenciaDouble>0){
-            return String.valueOf(getPotenciaDouble());
+            if(count==0){
+                return String.valueOf(0);
+            }
+            return String.valueOf(getPotenciaDouble()/count);
         }
         return potencia;
     }
@@ -119,5 +132,17 @@ public class FranjaHoraria {
     }
     public void plusPotencia(double potenciaDouble){
         this.potenciaDouble +=potenciaDouble;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public void plusCount(){
+        this.count+=1;
     }
 }

@@ -145,6 +145,34 @@ public class ConectFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         dbManager = (new DBManager(getActivity().getApplicationContext())).open();
+        actualizarUltimoInsert();
+        super.onViewCreated(view, savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        actualizarUltimoInsert();
+
+        if(arduinoManager.getUsbHelper().isOpened()){
+            conectUsbButton.setPressed(true);
+            if(arduinoManager.getBluetoothHelper().isConnected()) {
+                arduinoManager.getBluetoothHelper().Disconnect();
+            }
+            conectBluetoohButton.setPressed(false);
+        } else {
+            conectUsbButton.setPressed(false);
+        }
+        if(arduinoManager.getBluetoothHelper().isConnected()) {
+            conectBluetoohButton.setPressed(true);
+        }
+        super.onResume();
+    }
+
+    public void snackbar(String message){
+        Snackbar.make(frameLayout,message,Snackbar.LENGTH_SHORT).show();
+    }
+
+    public void actualizarUltimoInsert(){
         Cursor cursor = dbManager.lastInsert();
         try {
             while (cursor.moveToNext()) {
@@ -163,28 +191,6 @@ public class ConectFragment extends Fragment {
         } finally {
             cursor.close();
         }
-            super.onViewCreated(view, savedInstanceState);
-    }
-
-    @Override
-    public void onResume() {
-        if(arduinoManager.getUsbHelper().isOpened()){
-            conectUsbButton.setPressed(true);
-            if(arduinoManager.getBluetoothHelper().isConnected()) {
-                arduinoManager.getBluetoothHelper().Disconnect();
-            }
-            conectBluetoohButton.setPressed(false);
-        } else {
-            conectUsbButton.setPressed(false);
-        }
-        if(arduinoManager.getBluetoothHelper().isConnected()) {
-            conectBluetoohButton.setPressed(true);
-        }
-        super.onResume();
-    }
-
-    public void snackbar(String message){
-        Snackbar.make(frameLayout,message,Snackbar.LENGTH_SHORT).show();
     }
 
 }
