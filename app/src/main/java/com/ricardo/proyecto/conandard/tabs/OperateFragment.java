@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,8 @@ public class OperateFragment extends Fragment {
     private ImageView operateNextButton;
     private Date fechaModificable,fechaActual;
     private SimpleDateFormat formatoLocal;
+    private SimpleDateFormat formatoGlobal;
+    private SimpleDateFormat formatoDB;
 
     public OperateFragment() {
         // Required empty public constructor
@@ -98,117 +101,13 @@ public class OperateFragment extends Fragment {
         fechaModificable = new Date();
         fechaActual = new Date();
         formatoLocal = new SimpleDateFormat("dd/MM/yyyy");
+        formatoDB = new SimpleDateFormat("dd-MM-yyyy");
+        formatoGlobal = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
         operateFechaTextVew.setText(formatoLocal.format(fechaModificable));
         operateNextButton.setVisibility(View.INVISIBLE);
 
-        SimpleDateFormat s = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
         dbManager = (new DBManager(getActivity().getApplicationContext())).open();
-        Cursor cursor = dbManager.fetch();
-        int count = cursor.getCount();
-        try {
-            FranjaHoraria franjaHoraria78 = list.get(0);
-            FranjaHoraria franjaHoraria89 = list.get(1);
-            FranjaHoraria franjaHoraria910 = list.get(2);
-            FranjaHoraria franjaHoraria1011 = list.get(3);
-            FranjaHoraria franjaHoraria1112 = list.get(4);
-            FranjaHoraria franjaHoraria1213 = list.get(5);
-            FranjaHoraria franjaHoraria1314 = list.get(6);
-            FranjaHoraria franjaHoraria1415 = list.get(7);
-            FranjaHoraria franjaHoraria1516 = list.get(8);
-            FranjaHoraria franjaHoraria1617 = list.get(9);
-            FranjaHoraria franjaHoraria1718 = list.get(10);
-            FranjaHoraria franjaHoraria1819 = list.get(11);
-            while (cursor.moveToNext()) {
-                String fecha_hora = cursor.getString(cursor.getColumnIndex(HubSolarDBHelper.FECHA_HORA));
-                Double radiacion_solar = cursor.getDouble(cursor.getColumnIndex(HubSolarDBHelper.RADIACION_SOLAR));
-                Double intesidad_corriente = cursor.getDouble(cursor.getColumnIndex(HubSolarDBHelper.INTESIDAD_CORRIENTE));
-                Double voltaje = cursor.getDouble(cursor.getColumnIndex(HubSolarDBHelper.VOLTAJE));
-                Double potencia = cursor.getDouble(cursor.getColumnIndex(HubSolarDBHelper.POTENCIA));
-                Date date = s.parse(fecha_hora);
-
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(date);
-                int hora = cal.get(Calendar.HOUR_OF_DAY);
-                switch (hora){
-                    case 7:
-                        franjaHoraria78.plusIntensidadCorriente(intesidad_corriente);
-                        franjaHoraria78.plusPotencia(potencia);
-                        franjaHoraria78.plusRadiacionSolar(radiacion_solar);
-                        franjaHoraria78.plusVoltaje(voltaje);
-                        break;
-                    case 8:
-                        franjaHoraria89.plusIntensidadCorriente(intesidad_corriente);
-                        franjaHoraria89.plusPotencia(potencia);
-                        franjaHoraria89.plusRadiacionSolar(radiacion_solar);
-                        franjaHoraria89.plusVoltaje(voltaje);
-                        break;
-                    case 9:
-                        franjaHoraria910.plusIntensidadCorriente(intesidad_corriente);
-                        franjaHoraria910.plusPotencia(potencia);
-                        franjaHoraria910.plusRadiacionSolar(radiacion_solar);
-                        franjaHoraria910.plusVoltaje(voltaje);
-                        break;
-                    case 10:
-                        franjaHoraria1011.plusIntensidadCorriente(intesidad_corriente);
-                        franjaHoraria1011.plusPotencia(potencia);
-                        franjaHoraria1011.plusRadiacionSolar(radiacion_solar);
-                        franjaHoraria1011.plusVoltaje(voltaje);
-                        break;
-                    case 11:
-                        franjaHoraria1112.plusIntensidadCorriente(intesidad_corriente);
-                        franjaHoraria1112.plusPotencia(potencia);
-                        franjaHoraria1112.plusRadiacionSolar(radiacion_solar);
-                        franjaHoraria1112.plusVoltaje(voltaje);
-                        break;
-                    case 12:
-                        franjaHoraria1213.plusIntensidadCorriente(intesidad_corriente);
-                        franjaHoraria1213.plusPotencia(potencia);
-                        franjaHoraria1213.plusRadiacionSolar(radiacion_solar);
-                        franjaHoraria1213.plusVoltaje(voltaje);
-                        break;
-                    case 13:
-                        franjaHoraria1314.plusIntensidadCorriente(intesidad_corriente);
-                        franjaHoraria1314.plusPotencia(potencia);
-                        franjaHoraria1314.plusRadiacionSolar(radiacion_solar);
-                        franjaHoraria1314.plusVoltaje(voltaje);
-                        break;
-                    case 14:
-                        franjaHoraria1415.plusIntensidadCorriente(intesidad_corriente);
-                        franjaHoraria1415.plusPotencia(potencia);
-                        franjaHoraria1415.plusRadiacionSolar(radiacion_solar);
-                        franjaHoraria1415.plusVoltaje(voltaje);
-                        break;
-                    case 15:
-                        franjaHoraria1516.plusIntensidadCorriente(intesidad_corriente);
-                        franjaHoraria1516.plusPotencia(potencia);
-                        franjaHoraria1516.plusRadiacionSolar(radiacion_solar);
-                        franjaHoraria1516.plusVoltaje(voltaje);
-                        break;
-                    case 16:
-                        franjaHoraria1617.plusIntensidadCorriente(intesidad_corriente);
-                        franjaHoraria1617.plusPotencia(potencia);
-                        franjaHoraria1617.plusRadiacionSolar(radiacion_solar);
-                        franjaHoraria1617.plusVoltaje(voltaje);
-                        break;
-                    case 17:
-                        franjaHoraria1718.plusIntensidadCorriente(intesidad_corriente);
-                        franjaHoraria1718.plusPotencia(potencia);
-                        franjaHoraria1718.plusRadiacionSolar(radiacion_solar);
-                        franjaHoraria1718.plusVoltaje(voltaje);
-                        break;
-                    case 18:
-                        franjaHoraria1819.plusIntensidadCorriente(intesidad_corriente);
-                        franjaHoraria1819.plusPotencia(potencia);
-                        franjaHoraria1819.plusRadiacionSolar(radiacion_solar);
-                        franjaHoraria1819.plusVoltaje(voltaje);
-                        break;
-                }
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        } finally {
-            cursor.close();
-        }
+        datosTabla();
 
         radioPerfil1Button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -245,6 +144,8 @@ public class OperateFragment extends Fragment {
                 cal.add(Calendar.DATE, -1);
                 fechaModificable = cal.getTime();
                 operateFechaTextVew.setText(formatoLocal.format(fechaModificable));
+                datosTabla(operateFechaTextVew.getText().toString());
+                medicionTableDataAdapter.notifyDataSetChanged();
             }
         });
         operateNextButton.setOnClickListener(new View.OnClickListener() {
@@ -258,10 +159,17 @@ public class OperateFragment extends Fragment {
                     operateFechaTextVew.setText(formatoLocal.format(fechaModificable));
                     if(fechaActual.equals(fechaModificable)) {
                         operateNextButton.setVisibility(View.INVISIBLE);
+                        datosTabla();
+                    } else {
+                        datosTabla(operateFechaTextVew.getText().toString());
                     }
+                    medicionTableDataAdapter.notifyDataSetChanged();
                 }
             }
         });
+
+        datosTabla();
+        medicionTableDataAdapter.notifyDataSetChanged();
         super.onViewCreated(view, savedInstanceState);
     }
 
@@ -276,6 +184,368 @@ public class OperateFragment extends Fragment {
         });
         medicionTableDataAdapter.notifyDataSetChanged();
         super.onResume();
+    }
+
+    public void datosTabla(){
+        Cursor cursor = dbManager.fetch();
+        try {
+            FranjaHoraria franjaHoraria78 = list.get(0);
+            franjaHoraria78.setCount(0);
+            franjaHoraria78.setIntensidadCorrienteDouble(0);
+            franjaHoraria78.setPotenciaDouble(0);
+            franjaHoraria78.setRadiacionSolarDouble(0);
+            franjaHoraria78.setVoltajeDouble(0);
+            FranjaHoraria franjaHoraria89 = list.get(1);
+            franjaHoraria89.setCount(0);
+            franjaHoraria89.setIntensidadCorrienteDouble(0);
+            franjaHoraria89.setPotenciaDouble(0);
+            franjaHoraria89.setRadiacionSolarDouble(0);
+            franjaHoraria89.setVoltajeDouble(0);
+            FranjaHoraria franjaHoraria910 = list.get(2);
+            franjaHoraria910.setCount(0);
+            franjaHoraria910.setIntensidadCorrienteDouble(0);
+            franjaHoraria910.setPotenciaDouble(0);
+            franjaHoraria910.setRadiacionSolarDouble(0);
+            franjaHoraria910.setVoltajeDouble(0);
+            FranjaHoraria franjaHoraria1011 = list.get(3);
+            franjaHoraria1011.setCount(0);
+            franjaHoraria1011.setIntensidadCorrienteDouble(0);
+            franjaHoraria1011.setPotenciaDouble(0);
+            franjaHoraria1011.setRadiacionSolarDouble(0);
+            franjaHoraria1011.setVoltajeDouble(0);
+            FranjaHoraria franjaHoraria1112 = list.get(4);
+            franjaHoraria1112.setCount(0);
+            franjaHoraria1112.setIntensidadCorrienteDouble(0);
+            franjaHoraria1112.setPotenciaDouble(0);
+            franjaHoraria1112.setRadiacionSolarDouble(0);
+            franjaHoraria1112.setVoltajeDouble(0);
+            FranjaHoraria franjaHoraria1213 = list.get(5);
+            franjaHoraria1213.setCount(0);
+            franjaHoraria1213.setIntensidadCorrienteDouble(0);
+            franjaHoraria1213.setPotenciaDouble(0);
+            franjaHoraria1213.setRadiacionSolarDouble(0);
+            franjaHoraria1213.setVoltajeDouble(0);
+            FranjaHoraria franjaHoraria1314 = list.get(6);
+            franjaHoraria1314.setCount(0);
+            franjaHoraria1314.setIntensidadCorrienteDouble(0);
+            franjaHoraria1314.setPotenciaDouble(0);
+            franjaHoraria1314.setRadiacionSolarDouble(0);
+            franjaHoraria1314.setVoltajeDouble(0);
+            FranjaHoraria franjaHoraria1415 = list.get(7);
+            franjaHoraria1415.setCount(0);
+            franjaHoraria1415.setIntensidadCorrienteDouble(0);
+            franjaHoraria1415.setPotenciaDouble(0);
+            franjaHoraria1415.setRadiacionSolarDouble(0);
+            franjaHoraria1415.setVoltajeDouble(0);
+            FranjaHoraria franjaHoraria1516 = list.get(8);
+            franjaHoraria1516.setCount(0);
+            franjaHoraria1516.setIntensidadCorrienteDouble(0);
+            franjaHoraria1516.setPotenciaDouble(0);
+            franjaHoraria1516.setRadiacionSolarDouble(0);
+            franjaHoraria1516.setVoltajeDouble(0);
+            FranjaHoraria franjaHoraria1617 = list.get(9);
+            franjaHoraria1617.setCount(0);
+            franjaHoraria1617.setIntensidadCorrienteDouble(0);
+            franjaHoraria1617.setPotenciaDouble(0);
+            franjaHoraria1617.setRadiacionSolarDouble(0);
+            franjaHoraria1617.setVoltajeDouble(0);
+            FranjaHoraria franjaHoraria1718 = list.get(10);
+            franjaHoraria1718.setCount(0);
+            franjaHoraria1718.setIntensidadCorrienteDouble(0);
+            franjaHoraria1718.setPotenciaDouble(0);
+            franjaHoraria1718.setRadiacionSolarDouble(0);
+            franjaHoraria1718.setVoltajeDouble(0);
+            FranjaHoraria franjaHoraria1819 = list.get(11);
+            franjaHoraria1819.setCount(0);
+            franjaHoraria1819.setIntensidadCorrienteDouble(0);
+            franjaHoraria1819.setPotenciaDouble(0);
+            franjaHoraria1819.setRadiacionSolarDouble(0);
+            franjaHoraria1819.setVoltajeDouble(0);
+            while (cursor.moveToNext()) {
+                String fecha_hora = cursor.getString(cursor.getColumnIndex(HubSolarDBHelper.FECHA_HORA));
+                Double radiacion_solar = cursor.getDouble(cursor.getColumnIndex(HubSolarDBHelper.RADIACION_SOLAR));
+                Double intesidad_corriente = cursor.getDouble(cursor.getColumnIndex(HubSolarDBHelper.INTESIDAD_CORRIENTE));
+                Double voltaje = cursor.getDouble(cursor.getColumnIndex(HubSolarDBHelper.VOLTAJE));
+                Double potencia = cursor.getDouble(cursor.getColumnIndex(HubSolarDBHelper.POTENCIA));
+                Date date = formatoGlobal.parse(fecha_hora);
+
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(date);
+                int hora = cal.get(Calendar.HOUR_OF_DAY);
+                switch (hora){
+                    case 7:
+                        franjaHoraria78.plusCount();
+                        franjaHoraria78.plusIntensidadCorriente(intesidad_corriente);
+                        franjaHoraria78.plusPotencia(potencia);
+                        franjaHoraria78.plusRadiacionSolar(radiacion_solar);
+                        franjaHoraria78.plusVoltaje(voltaje);
+                        break;
+                    case 8:
+                        franjaHoraria89.plusCount();
+                        franjaHoraria89.plusIntensidadCorriente(intesidad_corriente);
+                        franjaHoraria89.plusPotencia(potencia);
+                        franjaHoraria89.plusRadiacionSolar(radiacion_solar);
+                        franjaHoraria89.plusVoltaje(voltaje);
+                        break;
+                    case 9:
+                        franjaHoraria910.plusCount();
+                        franjaHoraria910.plusIntensidadCorriente(intesidad_corriente);
+                        franjaHoraria910.plusPotencia(potencia);
+                        franjaHoraria910.plusRadiacionSolar(radiacion_solar);
+                        franjaHoraria910.plusVoltaje(voltaje);
+                        break;
+                    case 10:
+                        franjaHoraria1011.plusCount();
+                        franjaHoraria1011.plusIntensidadCorriente(intesidad_corriente);
+                        franjaHoraria1011.plusPotencia(potencia);
+                        franjaHoraria1011.plusRadiacionSolar(radiacion_solar);
+                        franjaHoraria1011.plusVoltaje(voltaje);
+                        break;
+                    case 11:
+                        franjaHoraria1112.plusCount();
+                        franjaHoraria1112.plusIntensidadCorriente(intesidad_corriente);
+                        franjaHoraria1112.plusPotencia(potencia);
+                        franjaHoraria1112.plusRadiacionSolar(radiacion_solar);
+                        franjaHoraria1112.plusVoltaje(voltaje);
+                        break;
+                    case 12:
+                        franjaHoraria1213.plusCount();
+                        franjaHoraria1213.plusIntensidadCorriente(intesidad_corriente);
+                        franjaHoraria1213.plusPotencia(potencia);
+                        franjaHoraria1213.plusRadiacionSolar(radiacion_solar);
+                        franjaHoraria1213.plusVoltaje(voltaje);
+                        break;
+                    case 13:
+                        franjaHoraria1314.plusCount();
+                        franjaHoraria1314.plusIntensidadCorriente(intesidad_corriente);
+                        franjaHoraria1314.plusPotencia(potencia);
+                        franjaHoraria1314.plusRadiacionSolar(radiacion_solar);
+                        franjaHoraria1314.plusVoltaje(voltaje);
+                        break;
+                    case 14:
+                        franjaHoraria1415.plusCount();
+                        franjaHoraria1415.plusIntensidadCorriente(intesidad_corriente);
+                        franjaHoraria1415.plusPotencia(potencia);
+                        franjaHoraria1415.plusRadiacionSolar(radiacion_solar);
+                        franjaHoraria1415.plusVoltaje(voltaje);
+                        break;
+                    case 15:
+                        franjaHoraria1516.plusCount();
+                        franjaHoraria1516.plusIntensidadCorriente(intesidad_corriente);
+                        franjaHoraria1516.plusPotencia(potencia);
+                        franjaHoraria1516.plusRadiacionSolar(radiacion_solar);
+                        franjaHoraria1516.plusVoltaje(voltaje);
+                        break;
+                    case 16:
+                        franjaHoraria1617.plusCount();
+                        franjaHoraria1617.plusIntensidadCorriente(intesidad_corriente);
+                        franjaHoraria1617.plusPotencia(potencia);
+                        franjaHoraria1617.plusRadiacionSolar(radiacion_solar);
+                        franjaHoraria1617.plusVoltaje(voltaje);
+                        break;
+                    case 17:
+                        franjaHoraria1718.plusCount();
+                        franjaHoraria1718.plusIntensidadCorriente(intesidad_corriente);
+                        franjaHoraria1718.plusPotencia(potencia);
+                        franjaHoraria1718.plusRadiacionSolar(radiacion_solar);
+                        franjaHoraria1718.plusVoltaje(voltaje);
+                        break;
+                    case 18:
+                        franjaHoraria1819.plusCount();
+                        franjaHoraria1819.plusIntensidadCorriente(intesidad_corriente);
+                        franjaHoraria1819.plusPotencia(potencia);
+                        franjaHoraria1819.plusRadiacionSolar(radiacion_solar);
+                        franjaHoraria1819.plusVoltaje(voltaje);
+                        break;
+                }
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } finally {
+            cursor.close();
+        }
+    }
+
+    public void datosTabla(String fecha){
+        Cursor cursor = null;
+        try {
+            Date fechaBuscar = formatoLocal.parse(fecha);
+            cursor = dbManager.fetch(formatoDB.format(fechaBuscar));
+            FranjaHoraria franjaHoraria78 = list.get(0);
+            franjaHoraria78.setCount(0);
+            franjaHoraria78.setIntensidadCorrienteDouble(0);
+            franjaHoraria78.setPotenciaDouble(0);
+            franjaHoraria78.setRadiacionSolarDouble(0);
+            franjaHoraria78.setVoltajeDouble(0);
+            FranjaHoraria franjaHoraria89 = list.get(1);
+            franjaHoraria89.setCount(0);
+            franjaHoraria89.setIntensidadCorrienteDouble(0);
+            franjaHoraria89.setPotenciaDouble(0);
+            franjaHoraria89.setRadiacionSolarDouble(0);
+            franjaHoraria89.setVoltajeDouble(0);
+            FranjaHoraria franjaHoraria910 = list.get(2);
+            franjaHoraria910.setCount(0);
+            franjaHoraria910.setIntensidadCorrienteDouble(0);
+            franjaHoraria910.setPotenciaDouble(0);
+            franjaHoraria910.setRadiacionSolarDouble(0);
+            franjaHoraria910.setVoltajeDouble(0);
+            FranjaHoraria franjaHoraria1011 = list.get(3);
+            franjaHoraria1011.setCount(0);
+            franjaHoraria1011.setIntensidadCorrienteDouble(0);
+            franjaHoraria1011.setPotenciaDouble(0);
+            franjaHoraria1011.setRadiacionSolarDouble(0);
+            franjaHoraria1011.setVoltajeDouble(0);
+            FranjaHoraria franjaHoraria1112 = list.get(4);
+            franjaHoraria1112.setCount(0);
+            franjaHoraria1112.setIntensidadCorrienteDouble(0);
+            franjaHoraria1112.setPotenciaDouble(0);
+            franjaHoraria1112.setRadiacionSolarDouble(0);
+            franjaHoraria1112.setVoltajeDouble(0);
+            FranjaHoraria franjaHoraria1213 = list.get(5);
+            franjaHoraria1213.setCount(0);
+            franjaHoraria1213.setIntensidadCorrienteDouble(0);
+            franjaHoraria1213.setPotenciaDouble(0);
+            franjaHoraria1213.setRadiacionSolarDouble(0);
+            franjaHoraria1213.setVoltajeDouble(0);
+            FranjaHoraria franjaHoraria1314 = list.get(6);
+            franjaHoraria1314.setCount(0);
+            franjaHoraria1314.setIntensidadCorrienteDouble(0);
+            franjaHoraria1314.setPotenciaDouble(0);
+            franjaHoraria1314.setRadiacionSolarDouble(0);
+            franjaHoraria1314.setVoltajeDouble(0);
+            FranjaHoraria franjaHoraria1415 = list.get(7);
+            franjaHoraria1415.setCount(0);
+            franjaHoraria1415.setIntensidadCorrienteDouble(0);
+            franjaHoraria1415.setPotenciaDouble(0);
+            franjaHoraria1415.setRadiacionSolarDouble(0);
+            franjaHoraria1415.setVoltajeDouble(0);
+            FranjaHoraria franjaHoraria1516 = list.get(8);
+            franjaHoraria1516.setCount(0);
+            franjaHoraria1516.setIntensidadCorrienteDouble(0);
+            franjaHoraria1516.setPotenciaDouble(0);
+            franjaHoraria1516.setRadiacionSolarDouble(0);
+            franjaHoraria1516.setVoltajeDouble(0);
+            FranjaHoraria franjaHoraria1617 = list.get(9);
+            franjaHoraria1617.setCount(0);
+            franjaHoraria1617.setIntensidadCorrienteDouble(0);
+            franjaHoraria1617.setPotenciaDouble(0);
+            franjaHoraria1617.setRadiacionSolarDouble(0);
+            franjaHoraria1617.setVoltajeDouble(0);
+            FranjaHoraria franjaHoraria1718 = list.get(10);
+            franjaHoraria1718.setCount(0);
+            franjaHoraria1718.setIntensidadCorrienteDouble(0);
+            franjaHoraria1718.setPotenciaDouble(0);
+            franjaHoraria1718.setRadiacionSolarDouble(0);
+            franjaHoraria1718.setVoltajeDouble(0);
+            FranjaHoraria franjaHoraria1819 = list.get(11);
+            franjaHoraria1819.setCount(0);
+            franjaHoraria1819.setIntensidadCorrienteDouble(0);
+            franjaHoraria1819.setPotenciaDouble(0);
+            franjaHoraria1819.setRadiacionSolarDouble(0);
+            franjaHoraria1819.setVoltajeDouble(0);
+            while (cursor.moveToNext()) {
+                String fecha_hora = cursor.getString(cursor.getColumnIndex(HubSolarDBHelper.FECHA_HORA));
+                Double radiacion_solar = cursor.getDouble(cursor.getColumnIndex(HubSolarDBHelper.RADIACION_SOLAR));
+                Double intesidad_corriente = cursor.getDouble(cursor.getColumnIndex(HubSolarDBHelper.INTESIDAD_CORRIENTE));
+                Double voltaje = cursor.getDouble(cursor.getColumnIndex(HubSolarDBHelper.VOLTAJE));
+                Double potencia = cursor.getDouble(cursor.getColumnIndex(HubSolarDBHelper.POTENCIA));
+                Date date = formatoGlobal.parse(fecha_hora);
+
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(date);
+                int hora = cal.get(Calendar.HOUR_OF_DAY);
+                switch (hora){
+                    case 7:
+                        franjaHoraria78.plusCount();
+                        franjaHoraria78.plusIntensidadCorriente(intesidad_corriente);
+                        franjaHoraria78.plusPotencia(potencia);
+                        franjaHoraria78.plusRadiacionSolar(radiacion_solar);
+                        franjaHoraria78.plusVoltaje(voltaje);
+                        break;
+                    case 8:
+                        franjaHoraria89.plusCount();
+                        franjaHoraria89.plusIntensidadCorriente(intesidad_corriente);
+                        franjaHoraria89.plusPotencia(potencia);
+                        franjaHoraria89.plusRadiacionSolar(radiacion_solar);
+                        franjaHoraria89.plusVoltaje(voltaje);
+                        break;
+                    case 9:
+                        franjaHoraria910.plusCount();
+                        franjaHoraria910.plusIntensidadCorriente(intesidad_corriente);
+                        franjaHoraria910.plusPotencia(potencia);
+                        franjaHoraria910.plusRadiacionSolar(radiacion_solar);
+                        franjaHoraria910.plusVoltaje(voltaje);
+                        break;
+                    case 10:
+                        franjaHoraria1011.plusCount();
+                        franjaHoraria1011.plusIntensidadCorriente(intesidad_corriente);
+                        franjaHoraria1011.plusPotencia(potencia);
+                        franjaHoraria1011.plusRadiacionSolar(radiacion_solar);
+                        franjaHoraria1011.plusVoltaje(voltaje);
+                        break;
+                    case 11:
+                        franjaHoraria1112.plusCount();
+                        franjaHoraria1112.plusIntensidadCorriente(intesidad_corriente);
+                        franjaHoraria1112.plusPotencia(potencia);
+                        franjaHoraria1112.plusRadiacionSolar(radiacion_solar);
+                        franjaHoraria1112.plusVoltaje(voltaje);
+                        break;
+                    case 12:
+                        franjaHoraria1213.plusCount();
+                        franjaHoraria1213.plusIntensidadCorriente(intesidad_corriente);
+                        franjaHoraria1213.plusPotencia(potencia);
+                        franjaHoraria1213.plusRadiacionSolar(radiacion_solar);
+                        franjaHoraria1213.plusVoltaje(voltaje);
+                        break;
+                    case 13:
+                        franjaHoraria1314.plusCount();
+                        franjaHoraria1314.plusIntensidadCorriente(intesidad_corriente);
+                        franjaHoraria1314.plusPotencia(potencia);
+                        franjaHoraria1314.plusRadiacionSolar(radiacion_solar);
+                        franjaHoraria1314.plusVoltaje(voltaje);
+                        break;
+                    case 14:
+                        franjaHoraria1415.plusCount();
+                        franjaHoraria1415.plusIntensidadCorriente(intesidad_corriente);
+                        franjaHoraria1415.plusPotencia(potencia);
+                        franjaHoraria1415.plusRadiacionSolar(radiacion_solar);
+                        franjaHoraria1415.plusVoltaje(voltaje);
+                        break;
+                    case 15:
+                        franjaHoraria1516.plusCount();
+                        franjaHoraria1516.plusIntensidadCorriente(intesidad_corriente);
+                        franjaHoraria1516.plusPotencia(potencia);
+                        franjaHoraria1516.plusRadiacionSolar(radiacion_solar);
+                        franjaHoraria1516.plusVoltaje(voltaje);
+                        break;
+                    case 16:
+                        franjaHoraria1617.plusCount();
+                        franjaHoraria1617.plusIntensidadCorriente(intesidad_corriente);
+                        franjaHoraria1617.plusPotencia(potencia);
+                        franjaHoraria1617.plusRadiacionSolar(radiacion_solar);
+                        franjaHoraria1617.plusVoltaje(voltaje);
+                        break;
+                    case 17:
+                        franjaHoraria1718.plusCount();
+                        franjaHoraria1718.plusIntensidadCorriente(intesidad_corriente);
+                        franjaHoraria1718.plusPotencia(potencia);
+                        franjaHoraria1718.plusRadiacionSolar(radiacion_solar);
+                        franjaHoraria1718.plusVoltaje(voltaje);
+                        break;
+                    case 18:
+                        franjaHoraria1819.plusCount();
+                        franjaHoraria1819.plusIntensidadCorriente(intesidad_corriente);
+                        franjaHoraria1819.plusPotencia(potencia);
+                        franjaHoraria1819.plusRadiacionSolar(radiacion_solar);
+                        franjaHoraria1819.plusVoltaje(voltaje);
+                        break;
+                }
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } finally {
+            cursor.close();
+        }
     }
 
     private class FranjaHorariaRowColorProvider implements TableDataRowBackgroundProvider<FranjaHoraria> {
