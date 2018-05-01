@@ -99,7 +99,7 @@ public class HomeActivity extends AppCompatActivity {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new OperateFragment(), "INICIO");
         adapter.addFragment(new ConectFragment(), "CONECCION");
-        adapter.addFragment(new LogFragment(), "LOG");
+        //adapter.addFragment(new LogFragment(), "LOG");
         viewPager.setAdapter(adapter);
     }
 
