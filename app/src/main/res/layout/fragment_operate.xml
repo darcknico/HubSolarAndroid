@@ -8,23 +8,22 @@
     <!-- TODO: Update blank fragment layout -->
 
     <android.support.v4.widget.NestedScrollView
+        android:id="@+id/operateScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             android:padding="@dimen/linear_layout_padding"
-            android:weightSum="4"
             tools:layout_editor_absoluteX="8dp"
             tools:layout_editor_absoluteY="33dp">
 
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_margin="@dimen/card_layout_margin"
-                android:layout_weight="1"
                 app:cardCornerRadius="@dimen/card_cornerRadius"
                 app:cardElevation="@dimen/card_cardElevation"
                 app:contentPadding="@dimen/card_contentPadding">
@@ -40,7 +39,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="@dimen/linear_layout_item_padding"
-                        android:text="Ultima Lectura"
+                        android:text="Seleccionar Perfil"
                         android:textAlignment="center"
                         android:textColor="@color/md_blue_grey_900"
                         android:textSize="@dimen/text_title_size" />
@@ -60,22 +59,105 @@
                         android:padding="@dimen/linear_layout_item_padding"
                         android:weightSum="1">
 
+                        <RadioButton
+                            android:id="@+id/radioPerfil1Button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".01" />
+
                         <TextView
-                            android:id="@+id/textView1"
+                            android:id="@+id/nombrePerfil1TextView"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight=".75"
-                            android:text="Hora Ultima Lectura"
+                            android:layout_weight=".6"
+                            android:text="Consumo Media"
                             android:textSize="@dimen/text_subtitle_size" />
 
                         <TextView
-                            android:id="@+id/conectFechaText"
+                            android:id="@+id/valorPerfil1Text"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight=".25"
-                            android:text="FECHORA"
+                            android:layout_weight=".4"
+                            android:text="3161 m/Wh"
                             android:textSize="@dimen/text_subtitle_size" />
                     </LinearLayout>
+                    <TableLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:gravity="right"
+                            android:weightSum="4">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Tarea"
+                                android:textAlignment="center"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Aplicacion"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Consumo"
+                                android:textStyle="bold" />
+                        </TableRow>
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:gravity="right"
+                            android:weightSum="4">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Navegacion\n WEB"
+                                android:layout_weight="1"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Chrome"
+                                android:layout_weight="1"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="1549 m/Wh"
+                                android:layout_weight="1"/>
+                        </TableRow>
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:gravity="right"
+                            android:weightSum="4">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Mensajeria\n Instantanea"
+                                android:layout_weight="1"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Whatsapp"
+                                android:layout_weight="1"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="1612 m/Wh"
+                                android:layout_weight="1"/>
+                        </TableRow>
+                    </TableLayout>
 
                     <View
                         android:layout_width="fill_parent"
@@ -85,6 +167,8 @@
                         android:background="@color/md_grey_400"
                         android:visibility="visible" />
 
+
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -92,168 +176,198 @@
                         android:padding="@dimen/linear_layout_item_padding"
                         android:weightSum="1">
 
+                        <RadioButton
+                            android:id="@+id/radioPerfil2Button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".01" />
+
                         <TextView
-                            android:id="@+id/textView2"
+                            android:id="@+id/nombrePerfil2TextView"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight=".75"
-                            android:text="Radiacion Solar (KW/m2)"
+                            android:layout_weight=".6"
+                            android:text="Consumo Alto"
                             android:textSize="@dimen/text_subtitle_size" />
 
                         <TextView
-                            android:id="@+id/conectRadiacionText"
+                            android:id="@+id/valorPerfil2Text"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight=".25"
-                            android:text="0.55"
+                            android:layout_weight=".4"
+                            android:text="4819 m/Wh"
                             android:textSize="@dimen/text_subtitle_size" />
                     </LinearLayout>
-
-                    <View
-                        android:layout_width="fill_parent"
-                        android:layout_height="3dp"
-                        android:layout_marginBottom="@dimen/linear_layout_margin_item"
-                        android:layout_marginTop="@dimen/linear_layout_margin_item"
-                        android:background="@color/md_grey_400"
-                        android:visibility="visible" />
-
-                    <LinearLayout
+                    <TableLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="@dimen/linear_layout_item_padding"
-                        android:weightSum="1">
+                        android:layout_height="match_parent">
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:gravity="right"
+                            android:weightSum="4">
 
-                        <TextView
-                            android:id="@+id/textView3"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight=".75"
-                            android:text="Potencia entregada"
-                            android:textSize="@dimen/text_subtitle_size" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Tarea"
+                                android:textAlignment="center"
+                                android:textStyle="bold" />
 
-                        <TextView
-                            android:id="@+id/conectPotenciaText"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight=".25"
-                            android:text="5.9 W"
-                            android:textSize="@dimen/text_subtitle_size" />
-                    </LinearLayout>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Aplicacion"
+                                android:textStyle="bold" />
 
-                    <View
-                        android:layout_width="fill_parent"
-                        android:layout_height="3dp"
-                        android:layout_marginBottom="@dimen/linear_layout_margin_item"
-                        android:layout_marginTop="@dimen/linear_layout_margin_item"
-                        android:background="@color/md_grey_400"
-                        android:visibility="visible" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="@dimen/linear_layout_item_padding"
-                        android:weightSum="1">
-
-                        <TextView
-                            android:id="@+id/textView4"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight=".75"
-                            android:text="Temperatura ambiente"
-                            android:textSize="@dimen/text_subtitle_size" />
-
-                        <TextView
-                            android:id="@+id/conectTemperaturaText"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight=".25"
-                            android:text="14º"
-                            android:textSize="@dimen/text_subtitle_size" />
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="fill_parent"
-                        android:layout_height="3dp"
-                        android:layout_marginBottom="@dimen/linear_layout_margin_item"
-                        android:layout_marginTop="@dimen/linear_layout_margin_item"
-                        android:background="@color/md_grey_400"
-                        android:visibility="visible" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="@dimen/linear_layout_item_padding"
-                        android:weightSum="1">
-
-                        <TextView
-                            android:id="@+id/textView5"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight=".75"
-                            android:text="Humedad ambiente"
-                            android:textSize="@dimen/text_subtitle_size" />
-
-                        <TextView
-                            android:id="@+id/conectHumedadText"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight=".25"
-                            android:text="38%"
-                            android:textSize="@dimen/text_subtitle_size" />
-                    </LinearLayout>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Consumo"
+                                android:textStyle="bold" />
+                        </TableRow>
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:gravity="right"
+                            android:weightSum="4">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Navegacion\n WEB"
+                                android:layout_weight="1"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Chrome"
+                                android:layout_weight="1"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="1549 m/Wh"
+                                android:layout_weight="1"/>
+                        </TableRow>
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:gravity="right"
+                            android:weightSum="4">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Mensajeria\n Instantanea"
+                                android:layout_weight="1"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Whatsapp"
+                                android:layout_weight="1"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="1612 m/Wh"
+                                android:layout_weight="1"/>
+                        </TableRow>
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:gravity="right"
+                            android:weightSum="4">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Herramienta\n Educativa"
+                                android:layout_weight="1"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Apprendiendo"
+                                android:layout_weight="1"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="958 m/Wh"
+                                android:layout_weight="1"/>
+                        </TableRow>
+                    </TableLayout>
 
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_margin="@dimen/card_layout_margin"
-                android:layout_weight="1"
                 app:cardCornerRadius="@dimen/card_cornerRadius"
                 app:cardElevation="@dimen/card_cardElevation"
                 app:contentPadding="@dimen/card_contentPadding">
 
-                <RelativeLayout
-                    android:id="@+id/relativeLayout1"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="@dimen/card_relative_layout_padding">
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="5">
+
+                        <ImageView
+                            android:id="@+id/operatePreviousButton"
+                            style="?android:borderlessButtonStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:adjustViewBounds="true"
+                            android:cropToPadding="false"
+                            android:scaleType="center"
+                            android:src="@android:drawable/ic_media_previous" />
+
+                        <TextView
+                            android:id="@+id/operateFechaTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="3"
+                            android:text="Hoy"
+                            android:textAlignment="center" />
+
+                        <ImageView
+                            android:id="@+id/operateNextButton"
+                            style="?android:borderlessButtonStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:adjustViewBounds="true"
+                            android:cropToPadding="false"
+                            android:scaleType="center"
+                            android:src="@android:drawable/ic_media_next" />
+
+                    </LinearLayout>
 
                     <TextView
-                        android:id="@+id/textView12"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/operateTablaTituloTextView"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_centerHorizontal="true"
-                        android:layout_centerInParent="true"
-                        android:text="Sincronizar"
-                        android:textSize="18sp" />
+                        android:layout_weight="1"
+                        android:text="Tabla de Energia por Hora"
+                        android:textAlignment="center" />
 
-                    <ImageButton
-                        android:id="@+id/conectBluetoohButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerHorizontal="true"
-                        android:layout_centerInParent="true"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:src="@mipmap/ic_bluetooth" />
-
-                    <ImageButton
-                        android:id="@+id/conectUsbButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_gravity="center"
-                        android:layout_toStartOf="@+id/conectBluetoohButton"
-                        android:gravity="center"
-                        android:src="@mipmap/ic_usb" />
-                </RelativeLayout>
+                    <de.codecrafters.tableview.TableView
+                        android:id="@+id/tableView"
+                        android:layout_width="match_parent"
+                        android:layout_height="600dp"
+                        android:layout_margin="@dimen/card_layout_margin"
+                        app:tableView_columnCount="5"
+                        app:tableView_headerColor="@color/md_blue_grey_300" />
+                </LinearLayout>
             </android.support.v7.widget.CardView>
 
         </LinearLayout>

@@ -22,18 +22,13 @@ public class HomeActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private boolean toggleTheme = true;
 
     private ArduinoManager arduinoManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        toggleTheme = sp.getBoolean("theme",true);
-        setTheme(toggleTheme?R.style.AppTheme_Blue:R.style.AppTheme_Red);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -63,6 +58,11 @@ public class HomeActivity extends AppCompatActivity {
             if(arduinoManager.getUsbHelper().isOpened()) {
                 arduinoManager.getUsbHelper().unsetArduinoListener();
                 arduinoManager.getUsbHelper().close();
+            }
+        }
+        if(arduinoManager.getBluetoothHelper()!=null){
+            if(arduinoManager.getBluetoothHelper().isConnected()) {
+                arduinoManager.getBluetoothHelper().Disconnect();
             }
         }
         super.onDestroy();

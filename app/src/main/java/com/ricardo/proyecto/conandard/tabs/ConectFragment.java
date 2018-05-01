@@ -1,11 +1,14 @@
 package com.ricardo.proyecto.conandard.tabs;
 
 import android.bluetooth.BluetoothAdapter;
+import android.database.Cursor;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -15,10 +18,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.ricardo.proyecto.conandard.ConsoleActivity;
 import com.ricardo.proyecto.conandard.R;
 import com.ricardo.proyecto.conandard.manager.ArduinoManager;
+import com.ricardo.proyecto.conandard.repositorio.DBManager;
+import com.ricardo.proyecto.conandard.repositorio.HubSolarDBHelper;
 import com.ricardo.proyecto.conandard.repositorio.Singleton;
 
 import eu.basicairdata.bluetoothhelper.BluetoothHelper;
@@ -33,23 +39,24 @@ public class ConectFragment extends Fragment {
     private ImageButton conectCloudButton;
     private ImageButton conectImportButton;
 
-    private Drawable initialUsbButton;
-    private Drawable initialBluetoothButton;
-
     private ArduinoManager arduinoManager;
     private StringBuilder sb;
     private Singleton singleton;
 
     private View v;
     private FrameLayout frameLayout;
+    private Singleton singleton;
+
+    private long mLastClickTime = 0;
+    private TextView conectFechaText;
+    private TextView conectHumedadText;
+    private TextView conectPotenciaText;
+    private TextView conectRadiacionText;
+    private TextView conectTemperaturaText;
+    private DBManager dbManager;
 
     public ConectFragment() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -62,27 +69,39 @@ public class ConectFragment extends Fragment {
         conectUsbButton = (ImageButton) v.findViewById(R.id.conectUsbButton);
         conectCloudButton = (ImageButton) v.findViewById(R.id.conectCloudButton);
         conectImportButton = (ImageButton) v.findViewById(R.id.conectImportButton);
+        conectFechaText =(TextView) v.findViewById(R.id.conectFechaText);
+        conectHumedadText =(TextView) v.findViewById(R.id.conectHumedadText);
+        conectPotenciaText =(TextView) v.findViewById(R.id.conectPotenciaText);
+        conectRadiacionText =(TextView) v.findViewById(R.id.conectRadiacionText);
+        conectTemperaturaText =(TextView) v.findViewById(R.id.conectTemperaturaText);
+
 
         frameLayout = (FrameLayout) v.findViewById(R.id.fragmentConect);
 
         arduinoManager = ArduinoManager.getInstance();
         singleton = Singleton.getInstance();
 
-        //guardando el background inicial
-        initialUsbButton = conectUsbButton.getBackground();
-        initialBluetoothButton = conectBluetoohButton.getBackground();
+        singleton = Singleton.getInstance();
+
+        singleton.setUsbButton(conectUsbButton);
+        singleton.setBluethootButton(conectBluetoohButton);
+        singleton.setBackupButton(conectImportButton);
 
         if(arduinoManager.getUsbHelper().isOpened()){
-            conectUsbButton.setBackgroundResource(R.color.imageButtonPress);
+            conectUsbButton.setPressed(true);
         }
 
         if(arduinoManager.getBluetoothHelper().isConnected()){
-            conectBluetoohButton.setBackgroundColor(Color.BLUE);
+            conectBluetoohButton.setPressed(true);
         }
 
         conectBluetoohButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 2000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                 if (mBluetoothAdapter == null) {
                     snackbar("El dispositivo no dispone de bluetooth.");
@@ -94,7 +113,6 @@ public class ConectFragment extends Fragment {
                             arduinoManager.getBluetoothHelper().Connect("HubSolar");
                         } else {
                             arduinoManager.getBluetoothHelper().Disconnect();
-                            conectBluetoohButton.setBackground(initialBluetoothButton);
                             snackbar("Bluetooth desconectado.");
                         }
 
@@ -106,9 +124,13 @@ public class ConectFragment extends Fragment {
         conectUsbButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 2000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 if(arduinoManager.getUsbHelper().isOpened()){
                     arduinoManager.getUsbHelper().close();
-                    conectUsbButton.setBackground(initialUsbButton);
+                    conectUsbButton.setPressed(true);
                 }
             }
         });
@@ -116,6 +138,13 @@ public class ConectFragment extends Fragment {
         conectImportButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(arduinoManager.getUsbHelper().isOpened() || arduinoManager.getBluetoothHelper().isConnected()) {
+                    if (!singleton.isQuery() && !singleton.isImportar() && !singleton.isLOG() && !singleton.isBackup()) {
+                        singleton.setBackup(true);
+                        arduinoManager.enviar(ArduinoManager.BACKUP);
+                        conectImportButton.setPressed(true);
+                    }
+                }
                 Intent intent = new Intent(getActivity(), ConsoleActivity.class);
                 startActivity(intent);
             }
@@ -127,27 +156,56 @@ public class ConectFragment extends Fragment {
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        dbManager = (new DBManager(getActivity().getApplicationContext())).open();
+        actualizarUltimoInsert();
+        super.onViewCreated(view, savedInstanceState);
+    }
+
+    @Override
     public void onResume() {
+        actualizarUltimoInsert();
+
         conectarArduino();
 
         if(arduinoManager.getUsbHelper().isOpened()){
-            conectUsbButton.setBackgroundResource(R.color.imageButtonPress);
+            conectUsbButton.setPressed(true);
             if(arduinoManager.getBluetoothHelper().isConnected()) {
                 arduinoManager.getBluetoothHelper().Disconnect();
             }
-            conectBluetoohButton.setBackground(initialBluetoothButton);
-            snackbar("Dispositivo conectado por USB exitosamente");
+            conectBluetoohButton.setPressed(false);
         } else {
-            conectUsbButton.setBackground(initialUsbButton);
+            conectUsbButton.setPressed(false);
         }
         if(arduinoManager.getBluetoothHelper().isConnected()) {
-            conectBluetoohButton.setBackgroundResource(R.color.imageButtonPress);
+            conectBluetoohButton.setPressed(true);
         }
         super.onResume();
     }
 
     public void snackbar(String message){
         Snackbar.make(frameLayout,message,Snackbar.LENGTH_SHORT).show();
+    }
+
+    public void actualizarUltimoInsert(){
+        Cursor cursor = dbManager.lastInsert();
+        try {
+            while (cursor.moveToNext()) {
+                String fecha_hora = cursor.getString(cursor.getColumnIndex(HubSolarDBHelper.FECHA_HORA));
+                Double radiacion_solar = cursor.getDouble(cursor.getColumnIndex(HubSolarDBHelper.RADIACION_SOLAR));
+                Double temperatura = cursor.getDouble(cursor.getColumnIndex(HubSolarDBHelper.TEMPERATURA));
+                Double humedad = cursor.getDouble(cursor.getColumnIndex(HubSolarDBHelper.HUMEDAD));
+                Double potencia = cursor.getDouble(cursor.getColumnIndex(HubSolarDBHelper.POTENCIA));
+
+                conectFechaText.setText(fecha_hora);
+                conectRadiacionText.setText(radiacion_solar.toString());
+                conectPotenciaText.setText(potencia.toString());
+                conectTemperaturaText.setText(temperatura.toString());
+                conectHumedadText.setText(humedad.toString());
+            }
+        } finally {
+            cursor.close();
+        }
     }
 
     public void capturador(String referencia,String message){

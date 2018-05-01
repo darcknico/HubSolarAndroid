@@ -26,7 +26,7 @@ public class HubSolarDBHelper extends SQLiteOpenHelper {
     public static final String FECHA_HORA = "fecha_hora";
     public static final String SUBIDO = "subido";
     public static final String FECHA_HORA_SUBIDO = "fecha_hora_subido";
-    public static final String ID_SUBIDO = "fecha_hora_subido";
+    public static final String ID_SUBIDO = "id_subido";
     public static final String UUID = "uuid";
     public static final String CREADO = "creado";
 
