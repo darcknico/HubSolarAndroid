@@ -290,6 +290,15 @@
                         android:layout_centerInParent="true"
                         android:text="Importar Datos"
                         android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/countTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@+id/conectImportButton"
+                        android:layout_alignStart="@+id/textView13"
+                        android:text="Cantidad Registros ?" />
+
                 </RelativeLayout>
 
             </android.support.v7.widget.CardView>
@@ -326,6 +335,14 @@
                         android:layout_centerVertical="true"
                         android:text="Subir Nube"
                         android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/countDbTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@+id/conectCloudButton"
+                        android:layout_alignStart="@+id/textView14"
+                        android:text="Cantidad a Subir ?" />
                 </RelativeLayout>
             </android.support.v7.widget.CardView>
         </LinearLayout>

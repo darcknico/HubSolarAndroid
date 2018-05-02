@@ -1,5 +1,6 @@
 package com.ricardo.proyecto.conandard.tabs;
 
+import android.database.Cursor;
 import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -25,6 +26,7 @@ import com.ricardo.proyecto.conandard.repositorio.Singleton;
 import com.ricardo.proyecto.conandard.utils.HeatIndexCalculator;
 
 import java.security.Key;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -83,23 +85,7 @@ public class LogFragment extends Fragment {
         logTextView.setMovementMethod(new ScrollingMovementMethod());
 
         arduinoManager = ArduinoManager.getInstance();
-
         singleton = Singleton.getInstance();
-        /*
-        SimpleDateFormat formatoGlobal = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
-        dbManager.insert(
-                "53",
-                "27",
-                "9",
-                "9",
-                "0",
-                "0",
-                "0",
-                0l,
-                0l,
-                formatoGlobal.format(new Date())
-        );
-        */
 
         return v;
     }

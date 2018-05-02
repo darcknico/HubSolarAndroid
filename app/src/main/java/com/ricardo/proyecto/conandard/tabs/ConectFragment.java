@@ -13,6 +13,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,11 @@ import com.ricardo.proyecto.conandard.manager.ArduinoManager;
 import com.ricardo.proyecto.conandard.repositorio.DBManager;
 import com.ricardo.proyecto.conandard.repositorio.HubSolarDBHelper;
 import com.ricardo.proyecto.conandard.repositorio.Singleton;
+import com.ricardo.proyecto.conandard.utils.HeatIndexCalculator;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import eu.basicairdata.bluetoothhelper.BluetoothHelper;
 import me.aflak.arduino.ArduinoListener;
@@ -45,7 +51,6 @@ public class ConectFragment extends Fragment {
 
     private View v;
     private FrameLayout frameLayout;
-    private Singleton singleton;
 
     private long mLastClickTime = 0;
     private TextView conectFechaText;
@@ -53,6 +58,8 @@ public class ConectFragment extends Fragment {
     private TextView conectPotenciaText;
     private TextView conectRadiacionText;
     private TextView conectTemperaturaText;
+    private TextView countTextView;
+    private TextView countDbTextView;
     private DBManager dbManager;
 
     public ConectFragment() {
@@ -74,7 +81,8 @@ public class ConectFragment extends Fragment {
         conectPotenciaText =(TextView) v.findViewById(R.id.conectPotenciaText);
         conectRadiacionText =(TextView) v.findViewById(R.id.conectRadiacionText);
         conectTemperaturaText =(TextView) v.findViewById(R.id.conectTemperaturaText);
-
+        countTextView =(TextView) v.findViewById(R.id.countTextView);
+        countDbTextView =(TextView) v.findViewById(R.id.countDbTextView);
 
         frameLayout = (FrameLayout) v.findViewById(R.id.fragmentConect);
 
@@ -93,6 +101,31 @@ public class ConectFragment extends Fragment {
 
         if(arduinoManager.getBluetoothHelper().isConnected()){
             conectBluetoohButton.setPressed(true);
+        }
+
+        dbManager = (new DBManager(getActivity().getApplicationContext())).open();
+
+        SimpleDateFormat formatoGlobal = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
+        SimpleDateFormat formatoLocal = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+        Cursor cursor = dbManager.lastInsert();
+        try {
+            while (cursor.moveToNext()) {
+                String fecha_hora = cursor.getString(cursor.getColumnIndex(HubSolarDBHelper.FECHA_HORA));
+                Double radiacion_solar = cursor.getDouble(cursor.getColumnIndex(HubSolarDBHelper.RADIACION_SOLAR));
+                Double temperatura = cursor.getDouble(cursor.getColumnIndex(HubSolarDBHelper.TEMPERATURA));
+                Double humedad = cursor.getDouble(cursor.getColumnIndex(HubSolarDBHelper.HUMEDAD));
+                Double potencia = cursor.getDouble(cursor.getColumnIndex(HubSolarDBHelper.POTENCIA));
+                Date date = formatoGlobal.parse(fecha_hora);
+                conectFechaText.setText(formatoLocal.format(date));
+                conectRadiacionText.setText(String.valueOf(radiacion_solar));
+                conectPotenciaText.setText(String.valueOf(potencia));
+                conectTemperaturaText.setText(String.valueOf(temperatura));
+                conectHumedadText.setText(String.valueOf(humedad));
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } finally {
+            cursor.close();
         }
 
         conectBluetoohButton.setOnClickListener(new View.OnClickListener() {
@@ -124,13 +157,11 @@ public class ConectFragment extends Fragment {
         conectUsbButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 2000){
-                    return;
-                }
-                mLastClickTime = SystemClock.elapsedRealtime();
-                if(arduinoManager.getUsbHelper().isOpened()){
-                    arduinoManager.getUsbHelper().close();
-                    conectUsbButton.setPressed(true);
+                if(arduinoManager.getUsbHelper().isOpened() || arduinoManager.getBluetoothHelper().isConnected()) {
+                    Intent intent = new Intent(getActivity(), ConsoleActivity.class);
+                    startActivity(intent);
+                } else {
+                    snackbar("Ningun dispositivo conectado.");
                 }
             }
         });
@@ -145,8 +176,7 @@ public class ConectFragment extends Fragment {
                         conectImportButton.setPressed(true);
                     }
                 }
-                Intent intent = new Intent(getActivity(), ConsoleActivity.class);
-                startActivity(intent);
+
             }
         });
 
@@ -208,30 +238,86 @@ public class ConectFragment extends Fragment {
         }
     }
 
-    public void capturador(String referencia,String message){
-        if(singleton.isLOG()) {
-            enviar(ArduinoManager.LOG);
-        }
-        if(singleton.isQuery()){
-            if (message.contains("FIN")){
-                singleton.notQuery();
+    public void capturador(String referencia, String message){
+        Log.i("ARDUINO",message);
+        if(message.contains("COUNT")){
+            String[] messageSplit = message.split(" ");
+            for (String msg : messageSplit){
+                Log.i("COUNT",msg);
             }
-        }
-        if(singleton.isImportar()){
-            singleton.notImportar();
-        }
-        if(singleton.isBackup()){
+            countTextView.setText("Registros " + messageSplit[1].trim());
+        } else if(singleton.isLOG()) {
+            arduinoManager.enviar(ArduinoManager.LOG);
+        } else if(singleton.isQuery()){
             if (message.contains("FIN")){
-                singleton.notQuery();
+                singleton.setQuery(false);
             }
-        }
-    }
+        } else if(singleton.isImportar()){
+            String[] messageSplit = message.split(";");
+            if(messageSplit.length>3){
+                String id = messageSplit[0];
+                String temperatura = messageSplit[1];
+                String humedad = messageSplit[2];
+                String indice_calor = String.valueOf(HeatIndexCalculator.calculateHeatIndex(Integer.valueOf(temperatura),Double.valueOf(humedad)));
+                String radiacion_solar = "40";
+                String intensidad_corriente = "40";
+                String voltaje = "6";
+                String potencia = "2";
+                Long latitud = 0l;
+                Long longitud = 0l;
+                String fecha_hora = messageSplit[3]+" "+messageSplit[4];
 
-    public void enviar(String texto){
-        if(arduinoManager.getUsbHelper().isOpened()) {
-            arduinoManager.getUsbHelper().send(texto.getBytes());
-        } else if(arduinoManager.getBluetoothHelper().isConnected()){
-            arduinoManager.getBluetoothHelper().SendMessage(texto);
+                dbManager.insert(
+                        humedad,
+                        temperatura,
+                        indice_calor,
+                        radiacion_solar,
+                        intensidad_corriente,
+                        voltaje,
+                        potencia,
+                        latitud,
+                        longitud,
+                        fecha_hora
+                );
+            }
+            if(!message.contains("ERROR") || message.contains("FIN")){
+                singleton.notImportar();
+            }
+        } else if(singleton.isBackup()){
+            if (message.contains("BACKUP")){
+                singleton.setBackup(false);
+                if(singleton.getBackupButton()!=null){
+                    singleton.getBackupButton().setPressed(false);
+                }
+            } else {
+                String[] messageSplit = message.split(";");
+                if(messageSplit.length>3){
+                    String id = messageSplit[0];
+                    String temperatura = messageSplit[1];
+                    String humedad = messageSplit[2];
+                    String indice_calor = String.valueOf(HeatIndexCalculator.calculateHeatIndex(Integer.valueOf(temperatura),Double.valueOf(humedad)));
+                    String radiacion_solar = "40";
+                    String intensidad_corriente = "40";
+                    String voltaje = "6";
+                    String potencia = "2";
+                    Long latitud = 0l;
+                    Long longitud = 0l;
+                    String fecha_hora = messageSplit[3]+" "+messageSplit[4];
+
+                    dbManager.insert(
+                            humedad,
+                            temperatura,
+                            indice_calor,
+                            radiacion_solar,
+                            intensidad_corriente,
+                            voltaje,
+                            potencia,
+                            latitud,
+                            longitud,
+                            fecha_hora
+                    );
+                }
+            }
         }
     }
 
@@ -246,6 +332,7 @@ public class ConectFragment extends Fragment {
             public void onBluetoothHelperConnectionStateChanged(BluetoothHelper bluetoothhelper, boolean isConnected) {
                 if(isConnected){
                     snackbar("Dispositivo conectado por Bluetooth.");
+                    arduinoManager.enviar(ArduinoManager.COUNT);
                 } else {
                     singleton.setImportar(false);
                     singleton.setLOG(false);
@@ -260,6 +347,7 @@ public class ConectFragment extends Fragment {
             public void onArduinoAttached(UsbDevice device) {
                 snackbar("Dispositivo conectado por USB exitosamente.");
                 arduinoManager.getUsbHelper().open(device);
+                arduinoManager.enviar(ArduinoManager.COUNT);
             }
 
             @Override
@@ -294,5 +382,9 @@ public class ConectFragment extends Fragment {
                 snackbar("Dispositivo conectado por USB, abierto.");
             }
         });
+        arduinoManager.enviar(ArduinoManager.COUNT);
+        Cursor cursor = dbManager.fetch();
+        int count = cursor.getCount();
+        countDbTextView.setText("Cantidad a Subir "+count);
     }
 }
